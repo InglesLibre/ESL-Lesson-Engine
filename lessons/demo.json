@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "title": "Demo Lesson",
+    "level": "A2",
+    "duration": 30,
+    "exam": "General English",
+    "grammar": ["Present Simple", "Present Continuous"],
+    "vocabulary": ["Daily Routines", "Hobbies"],
+    "description": "A simple demo lesson to test the ESL Lesson Generator"
+  },
+  "teacherNotes": [
+    "This is a simple demo lesson",
+    "All slide types work with the new architecture",
+    "Use this to test new features"
+  ],
+  "slides": [
+    {
+      "type": "Title",
+      "title": "Demo Lesson",
+      "subtitle": "Testing the New Architecture",
+      "objectives": [
+        "Test slide rendering",
+        "Verify activity engines",
+        "Check navigation"
+      ]
+    },
+    {
+      "type": "Speaking Part 1",
+      "part": 1,
+      "questions": [
+        "What is your name?",
+        "Where do you live?",
+        "What do you do in your free time?"
+      ],
+      "duration": 30,
+      "tips": [
+        "Speak clearly",
+        "Give full sentences"
+      ]
+    },
+    {
+      "type": "Vocabulary",
+      "words": [
+        {
+          "word": "Hello",
+          "definition": "A greeting",
+          "example": "Hello, how are you?"
+        },
+        {
+          "word": "Goodbye",
+          "definition": "A farewell",
+          "example": "Goodbye, see you later."
+        }
+      ]
+    },
+    {
+      "type": "Gap Fill",
+      "text": "Complete the sentences:\n\n1. Hello, how {{are}} you?\n2. Goodbye, see you {{later}}.",
+      "answers": ["are", "later"]
+    },
+    {
+      "type": "Multiple Choice",
+      "questions": [
+        {
+          "prompt": "What is a greeting?",
+          "options": ["Goodbye", "Hello", "Thank you", "Please"],
+          "answer": "Hello",
+          "explanation": "Hello is used as a greeting."
+        }
+      ]
+    },
+    {
+      "type": "Teacher Notes",
+      "content": "<h3>Answers</h3><ul><li>Gap Fill: are, later</li><li>Multiple Choice: Hello</li></ul>"
+    }
+  ]
+}
