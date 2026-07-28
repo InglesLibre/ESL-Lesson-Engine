@@ -1,27 +1,29 @@
-// Local Storage Manager
+// Storage Manager
 const Storage = {
-    prefix: 'esl_lesson_',
+    prefix: 'esl_',
     themeKey: 'esl_theme',
+    progressPrefix: 'esl_progress_',
     
     init() {
-        // Initialize storage if needed
         if (!localStorage.getItem(this.themeKey)) {
             localStorage.setItem(this.themeKey, 'default');
         }
     },
     
     saveProgress(lessonId, data) {
-        const key = `${this.prefix}${lessonId}`;
+        const key = `${this.progressPrefix}${lessonId}`;
         try {
-            localStorage.setItem(key, JSON.stringify(data));
-            this.showSaveIndicator();
+            localStorage.setItem(key, JSON.stringify({
+                ...data,
+                savedAt: Date.now()
+            }));
         } catch (error) {
             console.error('Error saving progress:', error);
         }
     },
     
     loadProgress(lessonId) {
-        const key = `${this.prefix}${lessonId}`;
+        const key = `${this.progressPrefix}${lessonId}`;
         try {
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : null;
@@ -35,8 +37,8 @@ const Storage = {
         const progress = {};
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key && key.startsWith(this.prefix)) {
-                const lessonId = key.replace(this.prefix, '');
+            if (key && key.startsWith(this.progressPrefix)) {
+                const lessonId = key.replace(this.progressPrefix, '');
                 try {
                     const data = JSON.parse(localStorage.getItem(key));
                     progress[lessonId] = data;
@@ -56,21 +58,19 @@ const Storage = {
         return localStorage.getItem(this.themeKey) || 'default';
     },
     
-    showSaveIndicator() {
-        let indicator = document.getElementById('saveIndicator');
-        if (!indicator) {
-            const div = document.createElement('div');
-            div.id = 'saveIndicator';
-            div.className = 'save-indicator';
-            div.textContent = 'Progress saved';
-            document.body.appendChild(div);
-            indicator = div;
+    clearProgress(lessonId) {
+        const key = `${this.progressPrefix}${lessonId}`;
+        localStorage.removeItem(key);
+    },
+    
+    clearAllProgress() {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(this.progressPrefix)) {
+                localStorage.removeItem(key);
+            }
         }
-        
-        indicator.classList.add('show');
-        clearTimeout(indicator._timeout);
-        indicator._timeout = setTimeout(() => {
-            indicator.classList.remove('show');
-        }, 2000);
     }
 };
+
+console.log('Storage loaded');
