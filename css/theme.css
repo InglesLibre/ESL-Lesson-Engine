@@ -13,24 +13,28 @@
     --transition: all 0.3s ease;
 }
 
-/* Baltic Blue Theme */
-.theme-default {
+/* Baltic Blue Theme (Default) */
+body:not(.theme-yellow) {
     --primary: var(--baltic-blue);
     --secondary: var(--school-bus-yellow);
     --bg: var(--bg-light);
     --text: var(--text-dark);
     --header-bg: var(--baltic-blue);
     --footer-bg: var(--baltic-blue);
+    --header-text: #ffffff;
+    --footer-text: #ffffff;
 }
 
 /* School Bus Yellow Theme */
-.theme-yellow {
+body.theme-yellow {
     --primary: var(--school-bus-yellow);
     --secondary: var(--baltic-blue);
     --bg: #fffcf0;
     --text: var(--text-dark);
     --header-bg: var(--school-bus-yellow);
     --footer-bg: var(--school-bus-yellow);
+    --header-text: var(--text-dark);
+    --footer-text: var(--text-dark);
 }
 
 body {
@@ -41,12 +45,16 @@ body {
 
 header {
     background: var(--header-bg);
-    color: var(--text);
+    color: var(--header-text);
     padding: 1rem 2rem;
     box-shadow: var(--shadow);
     position: sticky;
     top: 0;
     z-index: 100;
+}
+
+header h1 {
+    color: var(--header-text);
 }
 
 .header-content {
@@ -64,6 +72,7 @@ header {
     border: 2px solid var(--secondary);
     border-radius: 8px;
     background: var(--bg-white);
+    color: var(--text);
     font-weight: 500;
     min-width: 200px;
 }
@@ -72,6 +81,7 @@ header {
     display: flex;
     align-items: center;
     gap: 1rem;
+    color: var(--header-text);
 }
 
 .progress-bar {
@@ -104,12 +114,13 @@ header {
     border: none;
     border-radius: 8px;
     background: var(--primary);
-    color: var(--text);
+    color: var(--header-text);
     font-weight: 600;
     transition: var(--transition);
+    cursor: pointer;
 }
 
-.nav-btn:hover {
+.nav-btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: var(--shadow);
 }
@@ -127,7 +138,7 @@ header {
 
 footer {
     background: var(--footer-bg);
-    color: var(--text);
+    color: var(--footer-text);
     padding: 1rem 2rem;
     margin-top: auto;
 }
@@ -147,6 +158,7 @@ footer {
     border-radius: 8px;
     transition: var(--transition);
     background: rgba(255, 255, 255, 0.1);
+    color: var(--footer-text);
 }
 
 .teacher-notes-toggle:hover,
@@ -176,9 +188,10 @@ footer {
     border: none;
     border-radius: 8px;
     background: var(--primary);
-    color: var(--text);
+    color: var(--header-text);
     font-weight: 600;
     margin-top: 1rem;
+    cursor: pointer;
 }
 
 .license-panel {
