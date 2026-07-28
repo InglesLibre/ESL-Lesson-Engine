@@ -279,4 +279,126 @@
 }
 
 .dropdown-select {
-    padding:
+    padding: 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    min-width: 150px;
+}
+
+.dropdown-select:focus {
+    border-color: var(--primary, #1a3a5c);
+    outline: none;
+}
+
+/* Matching */
+.matching-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.matching-item {
+    padding: 0.5rem 1rem;
+    margin: 0.25rem 0;
+    background: var(--bg-light, #f0f4f8);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.matching-item:hover {
+    background: #e3ecf5;
+}
+
+.matching-item.selected {
+    background: var(--primary, #1a3a5c);
+    color: white;
+}
+
+.matching-item.matched {
+    background: #e8f5e9;
+    border-color: #4caf50;
+}
+
+/* Drag & Drop */
+.dragdrop-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.drag-item {
+    padding: 0.5rem 1rem;
+    margin: 0.25rem 0;
+    background: var(--primary, #1a3a5c);
+    color: white;
+    border-radius: 4px;
+    cursor: grab;
+    user-select: none;
+}
+
+.drag-item:active {
+    cursor: grabbing;
+}
+
+.drop-zone {
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border: 2px dashed #999;
+    border-radius: 8px;
+    min-height: 80px;
+    background: #f9f9f9;
+}
+
+.drop-zone.drag-over {
+    border-color: var(--secondary, #f5c518);
+    background: #fff8e1;
+}
+
+/* States */
+.loading-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-medium, #4a4a6a);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+}
+
+.error-state {
+    text-align: center;
+    padding: 3rem;
+    color: #f44336;
+}
+
+/* Print */
+@media print {
+    .header-content {
+        display: none !important;
+    }
+    
+    .navigation-controls {
+        display: none !important;
+    }
+    
+    .metadata-bar {
+        display: none !important;
+    }
+    
+    .panel {
+        display: none !important;
+    }
+    
+    .slide-page {
+        display: block !important;
+        page-break-after: always;
+    }
+    
+    .slide-content {
+        box-shadow: none !important;
+    }
+}
