@@ -57,24 +57,26 @@
         </div>
     </div>
     
-    <div id="licensePanel" class="license-panel" style="display: none;">
-        <div class="license-content">
-            <!-- License will be injected here -->
-        </div>
-    </div>
-    
+    <!-- Load scripts in the correct order -->
+    <!-- Utilities and core first -->
     <script src="js/utils.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/imageLoader.js"></script>
+    
+    <!-- Activities -->
     <script src="js/activities/gapfill.js"></script>
     <script src="js/activities/dropdown.js"></script>
     <script src="js/activities/multipleChoice.js"></script>
     <script src="js/activities/dragdrop.js"></script>
     <script src="js/activities/matching.js"></script>
     <script src="js/activities/speaking.js"></script>
+    
+    <!-- Core engine -->
     <script src="js/renderer.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/router.js"></script>
+    
+    <!-- App last -->
     <script src="js/app.js"></script>
 </body>
 </html>
