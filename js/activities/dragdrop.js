@@ -177,4 +177,150 @@ const DragDropActivity = {
             }
         });
         
-       
+        // Show results
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'dragdrop-results';
+        resultDiv.style.marginTop = '1rem';
+        resultDiv.style.padding = '1rem';
+        resultDiv.style.borderRadius = '8px';
+        resultDiv.style.background = 'var(--bg-light)';
+        resultDiv.innerHTML = `
+            <strong>Results:</strong> ${correctCount} out of ${totalCount} placed correctly
+            ${correctCount === totalCount && totalCount > 0 ? ' - Perfect!' : ''}
+            ${totalCount === 0 ? ' - No items placed yet.' : ''}
+        `;
+        
+        const oldResults = container.querySelector('.dragdrop-results');
+        if (oldResults) oldResults.remove();
+        container.appendChild(resultDiv);
+        
+        // Save progress
+        this.saveProgress(container);
+    },
+    
+    reset(container) {
+        const wrapper = container.querySelector('.dragdrop-wrapper');
+        if (!wrapper) return;
+        
+        // Get all dropped items
+        const droppedItems = wrapper.querySelectorAll('.dropped');
+        const sourceDiv = wrapper.querySelector('.drag-items');
+        
+        droppedItems.forEach(item => {
+            // Create new draggable item
+            const newItem = document.createElement('div');
+            newItem.className = 'drag-item';
+            newItem.draggable = true;
+            newItem.textContent = item.textContent;
+            newItem.dataset.category = item.dataset.originalCategory;
+            newItem.dataset.originalCategory = item.dataset.originalCategory;
+            
+            newItem.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({
+                    text: item.textContent,
+                    category: item.dataset.originalCategory
+                }));
+                newItem.classList.add('dragging');
+            });
+            
+            newItem.addEventListener('dragend', () => {
+                newItem.classList.remove('dragging');
+            });
+            
+            sourceDiv.appendChild(newItem);
+            item.remove();
+        });
+        
+        // Clear drop zones
+        wrapper.querySelectorAll('.dropped-items').forEach(drop => {
+            drop.innerHTML = '';
+        });
+        
+        // Remove results and completion messages
+        const results = container.querySelector('.dragdrop-results');
+        if (results) results.remove();
+        
+        const complete = wrapper.querySelector('.dragdrop-complete');
+        if (complete) complete.remove();
+        
+        // Reset styles
+        wrapper.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.style.borderColor = 'var(--text-medium)';
+            zone.style.background = 'var(--bg-light)';
+        });
+    },
+    
+    saveProgress(container) {
+        const wrapper = container.querySelector('.dragdrop-wrapper');
+        if (!wrapper) return;
+        
+        const progress = {
+            placedItems: []
+        };
+        
+        const droppedItems = wrapper.querySelectorAll('.dropped');
+        droppedItems.forEach(item => {
+            progress.placedItems.push({
+                text: item.textContent,
+                originalCategory: item.dataset.originalCategory,
+                placedIn: item.dataset.placedIn
+            });
+        });
+        
+        const lessonId = App.currentLesson;
+        if (lessonId) {
+            const saved = Storage.loadProgress(lessonId) || {};
+            saved.dragDropProgress = progress;
+            Storage.saveProgress(lessonId, saved);
+        }
+    },
+    
+    loadProgress(container) {
+        const lessonId = App.currentLesson;
+        if (!lessonId) return;
+        
+        const saved = Storage.loadProgress(lessonId);
+        if (saved && saved.dragDropProgress) {
+            // Reset current state first
+            this.reset(container);
+            
+            const wrapper = container.querySelector('.dragdrop-wrapper');
+            if (!wrapper) return;
+            
+            // Recreate the placed items
+            const dropZones = wrapper.querySelectorAll('.drop-zone');
+            const sourceDiv = wrapper.querySelector('.drag-items');
+            
+            saved.dragDropProgress.placedItems.forEach(itemData => {
+                // Find the item in source
+                const sourceItem = sourceDiv.querySelector(`.drag-item[data-category="${itemData.originalCategory}"]`);
+                if (sourceItem && sourceItem.textContent === itemData.text) {
+                    // Find the correct drop zone
+                    const targetZone = Array.from(dropZones).find(
+                        zone => zone.dataset.category === itemData.placedIn
+                    );
+                    
+                    if (targetZone) {
+                        const clone = sourceItem.cloneNode(true);
+                        clone.draggable = false;
+                        clone.style.cursor = 'default';
+                        clone.classList.add('dropped');
+                        clone.dataset.placedIn = itemData.placedIn;
+                        
+                        if (itemData.originalCategory === itemData.placedIn) {
+                            clone.style.background = '#4caf50';
+                            clone.style.color = 'white';
+                        } else {
+                            clone.style.background = '#f44336';
+                            clone.style.color = 'white';
+                        }
+                        
+                        const droppedItems = targetZone.querySelector('.dropped-items');
+                        droppedItems.appendChild(clone);
+                        sourceItem.remove();
+                    }
+                }
+            });
+        }
+    }
+};
