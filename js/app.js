@@ -38,32 +38,31 @@ const App = {
         console.log('App initialized');
     },
     
-registerSlideTypes() {
-    // Register all available slide types
-    this.slideTypes = {
-        'Title': SlideTitle,
-        'Speaking Part 1': SlideSpeaking,
-        'Speaking Part 2': SlideSpeaking,
-        'Speaking Part 3': SlideSpeaking,
-        'Grammar Discovery': SlideGrammar,
-        'Grammar Rules': SlideGrammar,
-        'Vocabulary': SlideVocabulary,
-        'Teacher Notes': SlideTeacherNotes,
-        'Objectives': SlideTitle,
-        'Ice Breaker': SlideSpeaking,
-        'Reading': SlideTitle,
-        'Listening': SlideTitle,
-        'Writing': SlideTitle,
-        // Activities - these will be handled by the activity engine
-        'Gap Fill': null,
-        'Dropdown': null,
-        'Matching': null,
-        'Drag & Drop': null,
-        'Multiple Choice': null
-    };
-    
-    console.log('Slide types registered:', Object.keys(this.slideTypes));
-}
+    registerSlideTypes() {
+        // Register all available slide types
+        this.slideTypes = {
+            'Title': SlideTitle,
+            'Speaking Part 1': SlideSpeaking,
+            'Speaking Part 2': SlideSpeaking,
+            'Speaking Part 3': SlideSpeaking,
+            'Grammar Discovery': SlideGrammar,
+            'Grammar Rules': SlideGrammar,
+            'Vocabulary': SlideVocabulary,
+            'Teacher Notes': SlideTeacherNotes,
+            'Objectives': SlideTitle,
+            'Ice Breaker': SlideSpeaking,
+            'Reading': SlideTitle,
+            'Listening': SlideTitle,
+            'Writing': SlideTitle,
+            // Activities - these will be handled by the activity engine
+            'Gap Fill': null,
+            'Dropdown': null,
+            'Matching': null,
+            'Drag & Drop': null,
+            'Multiple Choice': null
+        };
+        
+        console.log('Slide types registered:', Object.keys(this.slideTypes));
     },
     
     setupEventListeners() {
@@ -135,8 +134,16 @@ registerSlideTypes() {
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
             // Arrow keys for navigation
-            if (e.key === 'ArrowLeft') Navigation.prevSlide();
-            if (e.key === 'ArrowRight') Navigation.nextSlide();
+            if (e.key === 'ArrowLeft') {
+                if (typeof Navigation !== 'undefined') {
+                    Navigation.prevSlide();
+                }
+            }
+            if (e.key === 'ArrowRight') {
+                if (typeof Navigation !== 'undefined') {
+                    Navigation.nextSlide();
+                }
+            }
             
             // 'n' for teacher notes
             if (e.key === 'n' || e.key === 'N') {
@@ -287,7 +294,13 @@ registerSlideTypes() {
             this.updateMetadata(this.lessonData);
             
             // Render the lesson
-            Renderer.renderLesson(this.lessonData);
+            if (typeof Renderer !== 'undefined') {
+                Renderer.renderLesson(this.lessonData);
+            } else {
+                console.error('Renderer not defined');
+                slideContent.innerHTML = '<div class="error-state">Renderer not loaded. Please check the console for errors.</div>';
+                return;
+            }
             
             // Update title
             document.title = `${this.lessonData.metadata?.title || 'Lesson'} - ESL Lesson Generator`;
@@ -362,7 +375,9 @@ registerSlideTypes() {
         content.querySelectorAll('.toc-go-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const index = parseInt(btn.dataset.index);
-                Navigation.goToSlide(index);
+                if (typeof Navigation !== 'undefined') {
+                    Navigation.goToSlide(index);
+                }
                 this.closePanel('tocPanel');
             });
         });
@@ -414,7 +429,10 @@ registerSlideTypes() {
         const newTheme = currentTheme === 'yellow' ? 'default' : 'yellow';
         
         body.classList.toggle('theme-yellow');
-        Storage.saveTheme(newTheme);
+        
+        if (typeof Storage !== 'undefined') {
+            Storage.saveTheme(newTheme);
+        }
         
         const toggle = document.getElementById('themeToggle');
         if (toggle) {
@@ -424,7 +442,10 @@ registerSlideTypes() {
     },
     
     loadSavedTheme() {
-        const theme = Storage.loadTheme();
+        let theme = 'default';
+        if (typeof Storage !== 'undefined') {
+            theme = Storage.loadTheme();
+        }
         if (theme === 'yellow') {
             document.body.classList.add('theme-yellow');
         }
@@ -444,15 +465,18 @@ registerSlideTypes() {
     
     saveProgress() {
         if (this.currentLesson && this.currentSlideIndex !== undefined) {
-            Storage.saveProgress(this.currentLesson, {
-                slideIndex: this.currentSlideIndex,
-                timestamp: Date.now()
-            });
+            if (typeof Storage !== 'undefined') {
+                Storage.saveProgress(this.currentLesson, {
+                    slideIndex: this.currentSlideIndex,
+                    timestamp: Date.now()
+                });
+            }
         }
     }
 };
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM ready, initializing App...');
     App.init();
 });
