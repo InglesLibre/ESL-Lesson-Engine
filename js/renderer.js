@@ -1,8 +1,7 @@
-
-// Slide Renderer - Complete with all methods
+// Slide Renderer - Complete Fixed Version
 const Renderer = {
     currentIndex: 0,
-    slides: [],
+    slideElements: [],
     
     renderLesson(lessonData) {
         console.log('renderLesson called with:', lessonData);
@@ -30,8 +29,8 @@ const Renderer = {
         
         console.log('Rendering', lessonData.slides.length, 'slides');
         
-        // Store slides for later use
-        this.slides = [];
+        // Clear the slides array
+        this.slideElements = [];
         
         // Create each slide and append to container
         lessonData.slides.forEach((slide, index) => {
@@ -51,15 +50,16 @@ const Renderer = {
             
             // Append to container
             container.appendChild(slideDiv);
-            this.slides.push(slideDiv);
-            console.log(`Slide ${index} appended to container`);
+            this.slideElements.push(slideDiv);
+            console.log(`Slide ${index} appended to container, total slides now: ${this.slideElements.length}`);
         });
         
-        // Get all slides from container
+        // Now get all slides from the container
         const allSlides = container.querySelectorAll('.slide-page');
-        console.log('Total slides created:', allSlides.length);
+        console.log('Total slides in container (querySelectorAll):', allSlides.length);
+        console.log('Total slides in array:', this.slideElements.length);
         
-        if (allSlides.length > 0) {
+        if (this.slideElements.length > 0) {
             // Update counter
             const counter = document.getElementById('slideCounter');
             if (counter) {
@@ -181,6 +181,7 @@ const Renderer = {
         h1.style.color = '#1a3a5c';
         h1.style.textAlign = 'center';
         h1.style.marginBottom = '0.5rem';
+        h1.style.fontSize = '2rem';
         container.appendChild(h1);
         
         if (slide.subtitle) {
@@ -200,6 +201,7 @@ const Renderer = {
         const h2 = document.createElement('h2');
         h2.textContent = 'Learning Objectives';
         h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
         container.appendChild(h2);
         
         if (slide.content) {
@@ -238,6 +240,7 @@ const Renderer = {
         const h2 = document.createElement('h2');
         h2.textContent = 'Ice Breaker';
         h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
         container.appendChild(h2);
         
         this.renderImage(slide, container);
@@ -270,6 +273,7 @@ const Renderer = {
         const h2 = document.createElement('h2');
         h2.textContent = 'Vocabulary';
         h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
         container.appendChild(h2);
         
         this.renderImage(slide, container);
@@ -322,479 +326,34 @@ const Renderer = {
         this.renderContent(slide, container);
     },
     
-    renderReading(slide, container) {
-        const h2 = document.createElement('h2');
-        h2.textContent = 'Reading';
-        h2.style.color = '#1a3a5c';
-        container.appendChild(h2);
-        
-        this.renderImage(slide, container);
-        
-        if (slide.text) {
-            const div = document.createElement('div');
-            div.className = 'reading-text';
-            div.innerHTML = slide.text;
-            div.style.background = '#f0f4f8';
-            div.style.padding = '1.5rem';
-            div.style.borderRadius = '8px';
-            div.style.lineHeight = '1.8';
-            div.style.margin = '1rem 0';
-            container.appendChild(div);
-        }
-        
-        if (slide.content) {
-            const div = document.createElement('div');
-            div.innerHTML = slide.content;
-            container.appendChild(div);
-        }
-        
-        if (slide.questions && slide.questions.length > 0) {
-            const h3 = document.createElement('h3');
-            h3.textContent = 'Comprehension Questions';
-            h3.style.marginTop = '1rem';
-            container.appendChild(h3);
-            
-            const ol = document.createElement('ol');
-            slide.questions.forEach(q => {
-                const li = document.createElement('li');
-                li.textContent = q;
-                ol.appendChild(li);
-            });
-            container.appendChild(ol);
-        }
-    },
-    
-    renderListening(slide, container) {
-        const h2 = document.createElement('h2');
-        h2.textContent = 'Listening';
-        h2.style.color = '#1a3a5c';
-        container.appendChild(h2);
-        
-        this.renderImage(slide, container);
-        
-        if (slide.audioUrl) {
-            const audio = document.createElement('audio');
-            audio.controls = true;
-            audio.src = slide.audioUrl;
-            audio.style.width = '100%';
-            audio.style.margin = '1rem 0';
-            container.appendChild(audio);
-        }
-        
-        if (slide.script) {
-            const div = document.createElement('div');
-            div.className = 'listening-script';
-            div.innerHTML = `<strong>Script:</strong> ${slide.script}`;
-            div.style.background = '#f0f4f8';
-            div.style.padding = '1rem';
-            div.style.borderRadius = '8px';
-            div.style.margin = '1rem 0';
-            container.appendChild(div);
-        }
-        
-        if (slide.content) {
-            const div = document.createElement('div');
-            div.innerHTML = slide.content;
-            container.appendChild(div);
-        }
-        
-        if (slide.questions && slide.questions.length > 0) {
-            const h3 = document.createElement('h3');
-            h3.textContent = 'Comprehension Questions';
-            container.appendChild(h3);
-            
-            const ol = document.createElement('ol');
-            slide.questions.forEach(q => {
-                const li = document.createElement('li');
-                li.textContent = q;
-                ol.appendChild(li);
-            });
-            container.appendChild(ol);
-        }
-    },
-    
-    renderSpeaking(slide, container) {
-        const h2 = document.createElement('h2');
-        h2.textContent = slide.type || 'Speaking';
-        h2.style.color = '#1a3a5c';
-        container.appendChild(h2);
-        
-        this.renderImage(slide, container);
-        
-        if (slide.prompt) {
-            const div = document.createElement('div');
-            div.className = 'speaking-prompt';
-            div.innerHTML = slide.prompt;
-            div.style.fontSize = '1.1rem';
-            div.style.padding = '1rem';
-            div.style.background = '#f0f4f8';
-            div.style.borderRadius = '8px';
-            div.style.borderLeft = '4px solid #f5c518';
-            container.appendChild(div);
-        }
-        
-        if (slide.questions && slide.questions.length > 0) {
-            const ol = document.createElement('ol');
-            slide.questions.forEach(q => {
-                const li = document.createElement('li');
-                li.textContent = q;
-                ol.appendChild(li);
-            });
-            container.appendChild(ol);
-        }
-        
-        if (slide.tips && slide.tips.length > 0) {
-            const div = document.createElement('div');
-            div.className = 'speaking-tips';
-            div.innerHTML = `<strong>Tips:</strong><ul>${slide.tips.map(t => `<li>${t}</li>`).join('')}</ul>`;
-            div.style.background = '#e8f5e9';
-            div.style.padding = '1rem';
-            div.style.borderRadius = '8px';
-            div.style.margin = '1rem 0';
-            container.appendChild(div);
-        }
-        
-        if (slide.duration) {
-            const timer = document.createElement('div');
-            timer.className = 'speaking-timer';
-            timer.textContent = `${slide.duration}s`;
-            timer.style.fontSize = '3rem';
-            timer.style.fontWeight = '700';
-            timer.style.color = '#1a3a5c';
-            timer.style.textAlign = 'center';
-            timer.style.margin = '1rem 0';
-            container.appendChild(timer);
-        }
-        
-        if (slide.content) {
-            const div = document.createElement('div');
-            div.innerHTML = slide.content;
-            container.appendChild(div);
-        }
-    },
-    
-    renderWriting(slide, container) {
-        const h2 = document.createElement('h2');
-        h2.textContent = 'Writing';
-        h2.style.color = '#1a3a5c';
-        container.appendChild(h2);
-        
-        this.renderImage(slide, container);
-        
-        if (slide.prompt) {
-            const div = document.createElement('div');
-            div.className = 'writing-prompt';
-            div.innerHTML = slide.prompt;
-            div.style.fontSize = '1.1rem';
-            div.style.padding = '1rem';
-            div.style.background = '#f0f4f8';
-            div.style.borderRadius = '8px';
-            container.appendChild(div);
-        }
-        
-        if (slide.guidelines && slide.guidelines.length > 0) {
-            const div = document.createElement('div');
-            div.className = 'writing-guidelines';
-            div.innerHTML = `<strong>Guidelines:</strong><ul>${slide.guidelines.map(g => `<li>${g}</li>`).join('')}</ul>`;
-            div.style.margin = '1rem 0';
-            container.appendChild(div);
-        }
-        
-        if (slide.content) {
-            const div = document.createElement('div');
-            div.innerHTML = slide.content;
-            container.appendChild(div);
-        }
-    },
-    
-    renderGrammarDiscovery(slide, container) {
-        const h2 = document.createElement('h2');
-        h2.textContent = 'Grammar Discovery';
-        h2.style.color = '#1a3a5c';
-        container.appendChild(h2);
-        
-        this.renderImage(slide, container);
-        
-        if (slide.examples && slide.examples.length > 0) {
-            const div = document.createElement('div');
-            div.className = 'grammar-discovery';
-            div.innerHTML = `<strong>Look at these examples:</strong><ul>${slide.examples.map(e => `<li>${e}</li>`).join('')}</ul>`;
-            div.style.background = '#f0f4f8';
-            div.style.borderLeft = '4px solid #f5c518';
-            div.style.padding = '1.5rem';
-            div.style.borderRadius = '8px';
-            container.appendChild(div);
-        }
-        
-        if (slide.question) {
-            const p = document.createElement('p');
-            p.className = 'grammar-question';
-            p.textContent = slide.question;
-            p.style.fontWeight = '500';
-            p.style.marginTop = '1rem';
-            container.appendChild(p);
-        }
-        
-        if (slide.content) {
-            const div = document.createElement('div');
-            div.innerHTML = slide.content;
-            container.appendChild(div);
-        }
-    },
-    
-    renderGrammarRules(slide, container) {
-        const h2 = document.createElement('h2');
-        h2.textContent = 'Grammar Rules';
-        h2.style.color = '#1a3a5c';
-        container.appendChild(h2);
-        
-        this.renderImage(slide, container);
-        
-        const div = document.createElement('div');
-        div.className = 'grammar-rules';
-        div.style.background = '#1a3a5c';
-        div.style.color = 'white';
-        div.style.padding = '1.5rem';
-        div.style.borderRadius = '8px';
-        
-        if (slide.rules && slide.rules.length > 0) {
-            slide.rules.forEach(rule => {
-                const p = document.createElement('p');
-                p.innerHTML = `<strong style="color: #f5c518;">${rule.title}:</strong> ${rule.description}`;
-                p.style.margin = '0.5rem 0';
-                div.appendChild(p);
-            });
-        }
-        
-        container.appendChild(div);
-        
-        if (slide.content) {
-            const contentDiv = document.createElement('div');
-            contentDiv.innerHTML = slide.content;
-            container.appendChild(contentDiv);
-        }
-    },
-    
     renderGapFill(slide, container) {
         const h2 = document.createElement('h2');
         h2.textContent = 'Gap Fill Activity';
         h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
         container.appendChild(h2);
         
         this.renderImage(slide, container);
         
         if (slide.text && slide.answers) {
             const div = document.createElement('div');
-            div.className = 'gap-fill-text';
             div.style.lineHeight = '2.5';
-            
             let html = slide.text;
-            slide.answers.forEach((answer, index) => {
+            slide.answers.forEach((answer) => {
                 html = html.replace(/\{\{[^}]*\}\}/, `<input type="text" class="gap-fill-input" placeholder="..." style="padding:0.3rem 0.5rem;border:2px solid #ddd;border-radius:4px;min-width:100px;margin:0 0.25rem;" data-answer="${answer}">`);
             });
             div.innerHTML = html.replace(/\n/g, '<br>');
             container.appendChild(div);
         }
         
-        if (slide.content) {
-            const div = document.createElement('div');
-            div.innerHTML = slide.content;
-            container.appendChild(div);
-        }
-    },
-    
-    renderDropdown(slide, container) {
-        const h2 = document.createElement('h2');
-        h2.textContent = 'Dropdown Activity';
-        h2.style.color = '#1a3a5c';
-        container.appendChild(h2);
-        
-        this.renderImage(slide, container);
-        
-        if (slide.questions) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'dropdown-activity-wrapper';
-            
-            slide.questions.forEach((q, idx) => {
-                const qDiv = document.createElement('div');
-                qDiv.className = 'dropdown-question';
-                qDiv.style.margin = '1rem 0';
-                qDiv.innerHTML = `<p><strong>Q${idx + 1}:</strong> ${q.prompt}</p>`;
-                
-                const select = document.createElement('select');
-                select.className = 'dropdown-select';
-                select.style.padding = '0.5rem';
-                select.style.border = '2px solid #ddd';
-                select.style.borderRadius = '4px';
-                select.style.minWidth = '150px';
-                select.dataset.answer = q.answer || '';
-                
-                const defaultOpt = document.createElement('option');
-                defaultOpt.value = '';
-                defaultOpt.textContent = 'Select...';
-                select.appendChild(defaultOpt);
-                
-                q.options.forEach(o => {
-                    const opt = document.createElement('option');
-                    opt.value = o;
-                    opt.textContent = o;
-                    select.appendChild(opt);
-                });
-                
-                select.addEventListener('change', function() {
-                    if (this.value === this.dataset.answer) {
-                        this.style.borderColor = '#4caf50';
-                        this.style.background = '#e8f5e9';
-                    } else if (this.value !== '') {
-                        this.style.borderColor = '#f44336';
-                        this.style.background = '#ffebee';
-                    } else {
-                        this.style.borderColor = '#ddd';
-                        this.style.background = '';
-                    }
-                });
-                
-                qDiv.appendChild(select);
-                wrapper.appendChild(qDiv);
-            });
-            
-            container.appendChild(wrapper);
-        }
-        
-        if (slide.content) {
-            const div = document.createElement('div');
-            div.innerHTML = slide.content;
-            container.appendChild(div);
-        }
-    },
-    
-    renderMatching(slide, container) {
-        const h2 = document.createElement('h2');
-        h2.textContent = 'Matching Activity';
-        h2.style.color = '#1a3a5c';
-        container.appendChild(h2);
-        
-        this.renderImage(slide, container);
-        
-        if (slide.pairs) {
-            const div = document.createElement('div');
-            div.className = 'matching-container';
-            div.style.display = 'grid';
-            div.style.gridTemplateColumns = '1fr 1fr';
-            div.style.gap = '2rem';
-            
-            const leftCol = document.createElement('div');
-            const rightCol = document.createElement('div');
-            
-            slide.pairs.forEach((pair, index) => {
-                const leftItem = document.createElement('div');
-                leftItem.className = 'matching-item';
-                leftItem.textContent = pair.left;
-                leftItem.style.padding = '0.5rem 1rem';
-                leftItem.style.margin = '0.25rem 0';
-                leftItem.style.background = '#f0f4f8';
-                leftItem.style.borderRadius = '4px';
-                leftItem.style.cursor = 'pointer';
-                leftItem.dataset.index = index;
-                leftCol.appendChild(leftItem);
-                
-                const rightItem = document.createElement('div');
-                rightItem.className = 'matching-item';
-                rightItem.textContent = pair.right;
-                rightItem.style.padding = '0.5rem 1rem';
-                rightItem.style.margin = '0.25rem 0';
-                rightItem.style.background = '#f0f4f8';
-                rightItem.style.borderRadius = '4px';
-                rightItem.style.cursor = 'pointer';
-                rightItem.dataset.index = index;
-                rightCol.appendChild(rightItem);
-            });
-            
-            div.appendChild(leftCol);
-            div.appendChild(rightCol);
-            container.appendChild(div);
-        }
-        
-        if (slide.content) {
-            const div = document.createElement('div');
-            div.innerHTML = slide.content;
-            container.appendChild(div);
-        }
-    },
-    
-    renderDragDrop(slide, container) {
-        const h2 = document.createElement('h2');
-        h2.textContent = 'Drag & Drop Activity';
-        h2.style.color = '#1a3a5c';
-        container.appendChild(h2);
-        
-        this.renderImage(slide, container);
-        
-        if (slide.items && slide.categories) {
-            const div = document.createElement('div');
-            div.className = 'dragdrop-wrapper';
-            div.style.display = 'flex';
-            div.style.flexWrap = 'wrap';
-            div.style.gap = '2rem';
-            div.style.margin = '1rem 0';
-            
-            // Items
-            const itemsDiv = document.createElement('div');
-            itemsDiv.style.flex = '1';
-            itemsDiv.style.minWidth = '200px';
-            itemsDiv.innerHTML = '<h4>Items</h4>';
-            
-            slide.items.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'drag-item';
-                itemDiv.textContent = item.text;
-                itemDiv.style.padding = '0.5rem 1rem';
-                itemDiv.style.margin = '0.25rem 0';
-                itemDiv.style.background = '#1a3a5c';
-                itemDiv.style.color = 'white';
-                itemDiv.style.borderRadius = '4px';
-                itemDiv.style.cursor = 'grab';
-                itemDiv.draggable = true;
-                itemDiv.dataset.category = item.category;
-                itemsDiv.appendChild(itemDiv);
-            });
-            
-            // Categories
-            const categoriesDiv = document.createElement('div');
-            categoriesDiv.style.flex = '1';
-            categoriesDiv.style.minWidth = '200px';
-            categoriesDiv.innerHTML = '<h4>Categories</h4>';
-            
-            slide.categories.forEach(category => {
-                const zone = document.createElement('div');
-                zone.className = 'drop-zone';
-                zone.textContent = category.name;
-                zone.style.padding = '1rem';
-                zone.style.margin = '0.5rem 0';
-                zone.style.border = '2px dashed #999';
-                zone.style.borderRadius = '8px';
-                zone.style.minHeight = '80px';
-                zone.style.background = '#f9f9f9';
-                zone.dataset.category = category.name;
-                categoriesDiv.appendChild(zone);
-            });
-            
-            div.appendChild(itemsDiv);
-            div.appendChild(categoriesDiv);
-            container.appendChild(div);
-        }
-        
-        if (slide.content) {
-            const div = document.createElement('div');
-            div.innerHTML = slide.content;
-            container.appendChild(div);
-        }
+        this.renderContent(slide, container);
     },
     
     renderMultipleChoice(slide, container) {
         const h2 = document.createElement('h2');
         h2.textContent = 'Multiple Choice';
         h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
         container.appendChild(h2);
         
         this.renderImage(slide, container);
@@ -866,11 +425,428 @@ const Renderer = {
             container.appendChild(wrapper);
         }
         
+        this.renderContent(slide, container);
+    },
+    
+    renderDropdown(slide, container) {
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Dropdown Activity';
+        h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
+        container.appendChild(h2);
+        
+        this.renderImage(slide, container);
+        
+        if (slide.questions) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'dropdown-activity-wrapper';
+            
+            slide.questions.forEach((q, idx) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'dropdown-question';
+                qDiv.style.margin = '1rem 0';
+                qDiv.innerHTML = `<p><strong>Q${idx + 1}:</strong> ${q.prompt}</p>`;
+                
+                const select = document.createElement('select');
+                select.className = 'dropdown-select';
+                select.style.padding = '0.5rem';
+                select.style.border = '2px solid #ddd';
+                select.style.borderRadius = '4px';
+                select.style.minWidth = '150px';
+                select.dataset.answer = q.answer || '';
+                
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = '';
+                defaultOpt.textContent = 'Select...';
+                select.appendChild(defaultOpt);
+                
+                q.options.forEach(o => {
+                    const opt = document.createElement('option');
+                    opt.value = o;
+                    opt.textContent = o;
+                    select.appendChild(opt);
+                });
+                
+                select.addEventListener('change', function() {
+                    if (this.value === this.dataset.answer) {
+                        this.style.borderColor = '#4caf50';
+                        this.style.background = '#e8f5e9';
+                    } else if (this.value !== '') {
+                        this.style.borderColor = '#f44336';
+                        this.style.background = '#ffebee';
+                    } else {
+                        this.style.borderColor = '#ddd';
+                        this.style.background = '';
+                    }
+                });
+                
+                qDiv.appendChild(select);
+                wrapper.appendChild(qDiv);
+            });
+            
+            container.appendChild(wrapper);
+        }
+        
+        this.renderContent(slide, container);
+    },
+    
+    renderSpeaking(slide, container) {
+        const h2 = document.createElement('h2');
+        h2.textContent = slide.type || 'Speaking';
+        h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
+        container.appendChild(h2);
+        
+        this.renderImage(slide, container);
+        
+        if (slide.prompt) {
+            const div = document.createElement('div');
+            div.className = 'speaking-prompt';
+            div.innerHTML = slide.prompt;
+            div.style.fontSize = '1.1rem';
+            div.style.padding = '1rem';
+            div.style.background = '#f0f4f8';
+            div.style.borderRadius = '8px';
+            div.style.borderLeft = '4px solid #f5c518';
+            container.appendChild(div);
+        }
+        
+        if (slide.questions && slide.questions.length > 0) {
+            const ol = document.createElement('ol');
+            slide.questions.forEach(q => {
+                const li = document.createElement('li');
+                li.textContent = q;
+                ol.appendChild(li);
+            });
+            container.appendChild(ol);
+        }
+        
+        if (slide.tips && slide.tips.length > 0) {
+            const div = document.createElement('div');
+            div.className = 'speaking-tips';
+            div.innerHTML = `<strong>Tips:</strong><ul>${slide.tips.map(t => `<li>${t}</li>`).join('')}</ul>`;
+            div.style.background = '#e8f5e9';
+            div.style.padding = '1rem';
+            div.style.borderRadius = '8px';
+            div.style.margin = '1rem 0';
+            container.appendChild(div);
+        }
+        
+        if (slide.duration) {
+            const timer = document.createElement('div');
+            timer.className = 'speaking-timer';
+            timer.textContent = `${slide.duration}s`;
+            timer.style.fontSize = '3rem';
+            timer.style.fontWeight = '700';
+            timer.style.color = '#1a3a5c';
+            timer.style.textAlign = 'center';
+            timer.style.margin = '1rem 0';
+            container.appendChild(timer);
+        }
+        
+        this.renderContent(slide, container);
+    },
+    
+    renderReading(slide, container) {
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Reading';
+        h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
+        container.appendChild(h2);
+        
+        this.renderImage(slide, container);
+        
+        if (slide.text) {
+            const div = document.createElement('div');
+            div.className = 'reading-text';
+            div.innerHTML = slide.text;
+            div.style.background = '#f0f4f8';
+            div.style.padding = '1.5rem';
+            div.style.borderRadius = '8px';
+            div.style.lineHeight = '1.8';
+            div.style.margin = '1rem 0';
+            container.appendChild(div);
+        }
+        
         if (slide.content) {
             const div = document.createElement('div');
             div.innerHTML = slide.content;
             container.appendChild(div);
         }
+        
+        if (slide.questions && slide.questions.length > 0) {
+            const h3 = document.createElement('h3');
+            h3.textContent = 'Comprehension Questions';
+            h3.style.marginTop = '1rem';
+            container.appendChild(h3);
+            
+            const ol = document.createElement('ol');
+            slide.questions.forEach(q => {
+                const li = document.createElement('li');
+                li.textContent = q;
+                ol.appendChild(li);
+            });
+            container.appendChild(ol);
+        }
+    },
+    
+    renderListening(slide, container) {
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Listening';
+        h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
+        container.appendChild(h2);
+        
+        this.renderImage(slide, container);
+        
+        if (slide.audioUrl) {
+            const audio = document.createElement('audio');
+            audio.controls = true;
+            audio.src = slide.audioUrl;
+            audio.style.width = '100%';
+            audio.style.margin = '1rem 0';
+            container.appendChild(audio);
+        }
+        
+        if (slide.script) {
+            const div = document.createElement('div');
+            div.className = 'listening-script';
+            div.innerHTML = `<strong>Script:</strong> ${slide.script}`;
+            div.style.background = '#f0f4f8';
+            div.style.padding = '1rem';
+            div.style.borderRadius = '8px';
+            div.style.margin = '1rem 0';
+            container.appendChild(div);
+        }
+        
+        if (slide.content) {
+            const div = document.createElement('div');
+            div.innerHTML = slide.content;
+            container.appendChild(div);
+        }
+        
+        if (slide.questions && slide.questions.length > 0) {
+            const h3 = document.createElement('h3');
+            h3.textContent = 'Comprehension Questions';
+            container.appendChild(h3);
+            
+            const ol = document.createElement('ol');
+            slide.questions.forEach(q => {
+                const li = document.createElement('li');
+                li.textContent = q;
+                ol.appendChild(li);
+            });
+            container.appendChild(ol);
+        }
+    },
+    
+    renderWriting(slide, container) {
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Writing';
+        h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
+        container.appendChild(h2);
+        
+        this.renderImage(slide, container);
+        
+        if (slide.prompt) {
+            const div = document.createElement('div');
+            div.className = 'writing-prompt';
+            div.innerHTML = slide.prompt;
+            div.style.fontSize = '1.1rem';
+            div.style.padding = '1rem';
+            div.style.background = '#f0f4f8';
+            div.style.borderRadius = '8px';
+            container.appendChild(div);
+        }
+        
+        if (slide.guidelines && slide.guidelines.length > 0) {
+            const div = document.createElement('div');
+            div.className = 'writing-guidelines';
+            div.innerHTML = `<strong>Guidelines:</strong><ul>${slide.guidelines.map(g => `<li>${g}</li>`).join('')}</ul>`;
+            div.style.margin = '1rem 0';
+            container.appendChild(div);
+        }
+        
+        this.renderContent(slide, container);
+    },
+    
+    renderGrammarDiscovery(slide, container) {
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Grammar Discovery';
+        h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
+        container.appendChild(h2);
+        
+        this.renderImage(slide, container);
+        
+        if (slide.examples && slide.examples.length > 0) {
+            const div = document.createElement('div');
+            div.className = 'grammar-discovery';
+            div.innerHTML = `<strong>Look at these examples:</strong><ul>${slide.examples.map(e => `<li>${e}</li>`).join('')}</ul>`;
+            div.style.background = '#f0f4f8';
+            div.style.borderLeft = '4px solid #f5c518';
+            div.style.padding = '1.5rem';
+            div.style.borderRadius = '8px';
+            container.appendChild(div);
+        }
+        
+        if (slide.question) {
+            const p = document.createElement('p');
+            p.className = 'grammar-question';
+            p.textContent = slide.question;
+            p.style.fontWeight = '500';
+            p.style.marginTop = '1rem';
+            container.appendChild(p);
+        }
+        
+        this.renderContent(slide, container);
+    },
+    
+    renderGrammarRules(slide, container) {
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Grammar Rules';
+        h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
+        container.appendChild(h2);
+        
+        this.renderImage(slide, container);
+        
+        const div = document.createElement('div');
+        div.className = 'grammar-rules';
+        div.style.background = '#1a3a5c';
+        div.style.color = 'white';
+        div.style.padding = '1.5rem';
+        div.style.borderRadius = '8px';
+        
+        if (slide.rules && slide.rules.length > 0) {
+            slide.rules.forEach(rule => {
+                const p = document.createElement('p');
+                p.innerHTML = `<strong style="color: #f5c518;">${rule.title}:</strong> ${rule.description}`;
+                p.style.margin = '0.5rem 0';
+                div.appendChild(p);
+            });
+        }
+        
+        container.appendChild(div);
+        this.renderContent(slide, container);
+    },
+    
+    renderMatching(slide, container) {
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Matching Activity';
+        h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
+        container.appendChild(h2);
+        
+        this.renderImage(slide, container);
+        
+        if (slide.pairs) {
+            const div = document.createElement('div');
+            div.className = 'matching-container';
+            div.style.display = 'grid';
+            div.style.gridTemplateColumns = '1fr 1fr';
+            div.style.gap = '2rem';
+            
+            const leftCol = document.createElement('div');
+            const rightCol = document.createElement('div');
+            
+            slide.pairs.forEach((pair, index) => {
+                const leftItem = document.createElement('div');
+                leftItem.className = 'matching-item';
+                leftItem.textContent = pair.left;
+                leftItem.style.padding = '0.5rem 1rem';
+                leftItem.style.margin = '0.25rem 0';
+                leftItem.style.background = '#f0f4f8';
+                leftItem.style.borderRadius = '4px';
+                leftItem.style.cursor = 'pointer';
+                leftItem.dataset.index = index;
+                leftCol.appendChild(leftItem);
+                
+                const rightItem = document.createElement('div');
+                rightItem.className = 'matching-item';
+                rightItem.textContent = pair.right;
+                rightItem.style.padding = '0.5rem 1rem';
+                rightItem.style.margin = '0.25rem 0';
+                rightItem.style.background = '#f0f4f8';
+                rightItem.style.borderRadius = '4px';
+                rightItem.style.cursor = 'pointer';
+                rightItem.dataset.index = index;
+                rightCol.appendChild(rightItem);
+            });
+            
+            div.appendChild(leftCol);
+            div.appendChild(rightCol);
+            container.appendChild(div);
+        }
+        
+        this.renderContent(slide, container);
+    },
+    
+    renderDragDrop(slide, container) {
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Drag & Drop Activity';
+        h2.style.color = '#1a3a5c';
+        h2.style.fontSize = '1.5rem';
+        container.appendChild(h2);
+        
+        this.renderImage(slide, container);
+        
+        if (slide.items && slide.categories) {
+            const div = document.createElement('div');
+            div.className = 'dragdrop-wrapper';
+            div.style.display = 'flex';
+            div.style.flexWrap = 'wrap';
+            div.style.gap = '2rem';
+            div.style.margin = '1rem 0';
+            
+            // Items
+            const itemsDiv = document.createElement('div');
+            itemsDiv.style.flex = '1';
+            itemsDiv.style.minWidth = '200px';
+            itemsDiv.innerHTML = '<h4>Items</h4>';
+            
+            slide.items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'drag-item';
+                itemDiv.textContent = item.text;
+                itemDiv.style.padding = '0.5rem 1rem';
+                itemDiv.style.margin = '0.25rem 0';
+                itemDiv.style.background = '#1a3a5c';
+                itemDiv.style.color = 'white';
+                itemDiv.style.borderRadius = '4px';
+                itemDiv.style.cursor = 'grab';
+                itemDiv.draggable = true;
+                itemDiv.dataset.category = item.category;
+                itemsDiv.appendChild(itemDiv);
+            });
+            
+            // Categories
+            const categoriesDiv = document.createElement('div');
+            categoriesDiv.style.flex = '1';
+            categoriesDiv.style.minWidth = '200px';
+            categoriesDiv.innerHTML = '<h4>Categories</h4>';
+            
+            slide.categories.forEach(category => {
+                const zone = document.createElement('div');
+                zone.className = 'drop-zone';
+                zone.textContent = category.name;
+                zone.style.padding = '1rem';
+                zone.style.margin = '0.5rem 0';
+                zone.style.border = '2px dashed #999';
+                zone.style.borderRadius = '8px';
+                zone.style.minHeight = '80px';
+                zone.style.background = '#f9f9f9';
+                zone.dataset.category = category.name;
+                categoriesDiv.appendChild(zone);
+            });
+            
+            div.appendChild(itemsDiv);
+            div.appendChild(categoriesDiv);
+            container.appendChild(div);
+        }
+        
+        this.renderContent(slide, container);
     },
     
     renderContent(slide, container) {
@@ -931,11 +907,11 @@ const Renderer = {
             return;
         }
         
-        const slides = container.querySelectorAll('.slide-page');
-        console.log('Found slides in showSlide:', slides.length);
+        // Use the stored slide elements
+        console.log('Using stored slides array, length:', this.slideElements.length);
         
-        if (!slides || slides.length === 0) {
-            console.warn('No slides found in container');
+        if (this.slideElements.length === 0) {
+            console.warn('No slides in stored array');
             container.innerHTML = `
                 <div style="text-align: center; padding: 3rem; color: #ff9800;">
                     <h2>No slides to display</h2>
@@ -949,23 +925,23 @@ const Renderer = {
         }
         
         if (index < 0) index = 0;
-        if (index >= slides.length) index = slides.length - 1;
+        if (index >= this.slideElements.length) index = this.slideElements.length - 1;
         
-        slides.forEach((slide, i) => {
+        this.slideElements.forEach((slide, i) => {
             slide.style.display = i === index ? 'block' : 'none';
         });
         
-        this.updateProgress(index, slides.length);
+        this.updateProgress(index, this.slideElements.length);
         
         const counter = document.getElementById('slideCounter');
         if (counter) {
-            counter.textContent = `Slide ${index + 1} of ${slides.length}`;
+            counter.textContent = `Slide ${index + 1} of ${this.slideElements.length}`;
         }
         
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         if (prevBtn) prevBtn.disabled = index === 0;
-        if (nextBtn) nextBtn.disabled = index === slides.length - 1;
+        if (nextBtn) nextBtn.disabled = index === this.slideElements.length - 1;
         
         this.currentIndex = index;
         if (typeof App !== 'undefined') {
