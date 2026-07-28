@@ -1,3 +1,13 @@
+/* Add at the beginning of lesson.css */
+.slide-page {
+    display: none;
+}
+
+.slide-page:first-child {
+    display: block;
+}
+
+/* The rest of your existing CSS below... */
 .slide-container {
     max-width: 900px;
     margin: 0 auto;
