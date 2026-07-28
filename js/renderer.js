@@ -97,13 +97,22 @@ const Renderer = {
             container.appendChild(div);
         }
         
-        // Render activities if present
-        if (slide.questions || slide.text || slide.words) {
+        // Render activities if present - check for activity type
+        if (slide.type === 'Gap Fill' || slide.type === 'Dropdown' || 
+            slide.type === 'Matching' || slide.type === 'Multiple Choice' || 
+            slide.type === 'Drag & Drop') {
+            this.renderActivity(slide, container);
+        }
+        
+        // Also render if activity data is present
+        if (slide.text || slide.questions || slide.words || slide.pairs || slide.items) {
             this.renderActivity(slide, container);
         }
     },
     
     renderActivity(slide, container) {
+        console.log('renderActivity called for type:', slide.type);
+        
         // Delegate to activity renderers based on slide type
         const activityRenderers = {
             'Gap Fill': GapFillActivity,
@@ -114,9 +123,308 @@ const Renderer = {
         };
         
         const renderer = activityRenderers[slide.type];
+        
         if (renderer && typeof renderer.render === 'function') {
+            console.log('Using activity renderer for:', slide.type);
             renderer.render(container, slide);
+        } else {
+            console.warn('No renderer found for activity type:', slide.type);
+            // Try to render based on data structure
+            this.renderGenericActivity(slide, container);
         }
+    },
+    
+    renderGenericActivity(slide, container) {
+        console.log('Using generic activity rendering for:', slide.type);
+        
+        // Gap Fill
+        if (slide.text && slide.answers) {
+            this.renderGapFillGeneric(slide, container);
+            return;
+        }
+        
+        // Multiple Choice
+        if (slide.questions && slide.questions.length > 0 && slide.questions[0].options) {
+            this.renderMultipleChoiceGeneric(slide, container);
+            return;
+        }
+        
+        // Dropdown
+        if (slide.questions && slide.questions.length > 0 && slide.questions[0].options) {
+            this.renderDropdownGeneric(slide, container);
+            return;
+        }
+        
+        // Vocabulary
+        if (slide.words && slide.words.length > 0) {
+            this.renderVocabularyGeneric(slide, container);
+            return;
+        }
+        
+        // If nothing matches, show a message
+        const div = document.createElement('div');
+        div.style.padding = '1rem';
+        div.style.background = '#fff3cd';
+        div.style.borderRadius = '4px';
+        div.style.color = '#856404';
+        div.textContent = 'Activity content available but no specific renderer found.';
+        container.appendChild(div);
+    },
+    
+    renderGapFillGeneric(slide, container) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'activity-container gapfill-activity';
+        wrapper.style.margin = '1.5rem 0';
+        
+        const textDiv = document.createElement('div');
+        textDiv.className = 'gapfill-text';
+        textDiv.style.lineHeight = '2.5';
+        
+        let html = slide.text;
+        slide.answers.forEach((answer) => {
+            html = html.replace(/\{\{[^}]*\}\}/, `<input type="text" class="gapfill-input" data-answer="${answer}" placeholder="..." style="padding:0.3rem 0.5rem;border:2px solid #ddd;border-radius:4px;min-width:100px;margin:0 0.25rem;">`);
+        });
+        
+        textDiv.innerHTML = html.replace(/\n/g, '<br>');
+        wrapper.appendChild(textDiv);
+        
+        // Check button
+        const checkBtn = document.createElement('button');
+        checkBtn.className = 'activity-btn';
+        checkBtn.textContent = 'Check Answers';
+        checkBtn.style.padding = '0.4rem 1.5rem';
+        checkBtn.style.border = 'none';
+        checkBtn.style.borderRadius = '4px';
+        checkBtn.style.background = '#1a3a5c';
+        checkBtn.style.color = 'white';
+        checkBtn.style.fontWeight = '600';
+        checkBtn.style.cursor = 'pointer';
+        checkBtn.style.marginTop = '0.75rem';
+        
+        checkBtn.addEventListener('click', function() {
+            const inputs = wrapper.querySelectorAll('.gapfill-input');
+            let correct = 0;
+            inputs.forEach(input => {
+                const userAnswer = input.value.trim().toLowerCase();
+                const correctAnswer = input.dataset.answer.toLowerCase();
+                const isCorrect = userAnswer === correctAnswer;
+                input.style.borderColor = isCorrect ? '#4caf50' : '#f44336';
+                input.style.background = isCorrect ? '#e8f5e9' : '#ffebee';
+                if (isCorrect) correct++;
+            });
+            
+            const result = document.createElement('div');
+            result.className = 'gapfill-result';
+            result.textContent = `${correct} out of ${inputs.length} correct`;
+            result.style.marginTop = '1rem';
+            result.style.padding = '0.75rem';
+            result.style.borderRadius = '4px';
+            result.style.background = '#f0f4f8';
+            
+            const oldResult = wrapper.querySelector('.gapfill-result');
+            if (oldResult) oldResult.remove();
+            wrapper.appendChild(result);
+        });
+        
+        wrapper.appendChild(checkBtn);
+        container.appendChild(wrapper);
+    },
+    
+    renderMultipleChoiceGeneric(slide, container) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'activity-container multiple-choice-wrapper';
+        wrapper.style.margin = '1.5rem 0';
+        
+        slide.questions.forEach((q, idx) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'multiple-choice-question';
+            qDiv.style.margin = '1.5rem 0';
+            
+            const prompt = document.createElement('p');
+            prompt.innerHTML = `<strong>Q${idx + 1}:</strong> ${q.prompt}`;
+            qDiv.appendChild(prompt);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'multiple-choice-options';
+            
+            q.options.forEach(o => {
+                const label = document.createElement('label');
+                label.className = 'multiple-choice-option';
+                label.style.display = 'block';
+                label.style.padding = '0.5rem 1rem';
+                label.style.margin = '0.25rem 0';
+                label.style.background = '#f0f4f8';
+                label.style.borderRadius = '4px';
+                label.style.cursor = 'pointer';
+                label.style.border = '2px solid transparent';
+                
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `q${idx}`;
+                input.value = o;
+                
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(' ' + o));
+                
+                label.addEventListener('click', function() {
+                    const parent = this.parentElement;
+                    parent.querySelectorAll('.multiple-choice-option').forEach(el => {
+                        el.style.borderColor = 'transparent';
+                        el.style.background = '#f0f4f8';
+                    });
+                    this.style.borderColor = '#1a3a5c';
+                    this.style.background = '#e3ecf5';
+                    
+                    if (this.querySelector('input').value === q.answer) {
+                        this.style.borderColor = '#4caf50';
+                        this.style.background = '#e8f5e9';
+                    } else {
+                        this.style.borderColor = '#f44336';
+                        this.style.background = '#ffebee';
+                        // Show correct answer
+                        parent.querySelectorAll('.multiple-choice-option').forEach(el => {
+                            if (el.querySelector('input').value === q.answer) {
+                                el.style.borderColor = '#4caf50';
+                                el.style.background = '#e8f5e9';
+                            }
+                        });
+                    }
+                    
+                    // Show explanation
+                    const explanation = parent.parentElement.querySelector('.mc-explanation');
+                    if (explanation && q.explanation) {
+                        explanation.style.display = 'block';
+                        explanation.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+                    }
+                });
+                
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            
+            // Explanation
+            if (q.explanation) {
+                const explanation = document.createElement('div');
+                explanation.className = 'mc-explanation';
+                explanation.style.display = 'none';
+                explanation.style.marginTop = '0.75rem';
+                explanation.style.padding = '0.75rem';
+                explanation.style.borderRadius = '4px';
+                explanation.style.background = '#e8f5e9';
+                explanation.style.color = '#2e7d32';
+                qDiv.appendChild(explanation);
+            }
+            
+            wrapper.appendChild(qDiv);
+        });
+        
+        container.appendChild(wrapper);
+    },
+    
+    renderDropdownGeneric(slide, container) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'activity-container dropdown-wrapper';
+        wrapper.style.margin = '1.5rem 0';
+        
+        slide.questions.forEach((q, idx) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'dropdown-question';
+            qDiv.style.margin = '1rem 0';
+            
+            const prompt = document.createElement('p');
+            prompt.innerHTML = `<strong>Q${idx + 1}:</strong> ${q.prompt}`;
+            qDiv.appendChild(prompt);
+            
+            const select = document.createElement('select');
+            select.className = 'dropdown-select';
+            select.style.padding = '0.5rem';
+            select.style.border = '2px solid #ddd';
+            select.style.borderRadius = '4px';
+            select.style.minWidth = '150px';
+            select.dataset.answer = q.answer || '';
+            
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = 'Select...';
+            select.appendChild(defaultOpt);
+            
+            q.options.forEach(o => {
+                const opt = document.createElement('option');
+                opt.value = o;
+                opt.textContent = o;
+                select.appendChild(opt);
+            });
+            
+            select.addEventListener('change', function() {
+                if (this.value === this.dataset.answer) {
+                    this.style.borderColor = '#4caf50';
+                    this.style.background = '#e8f5e9';
+                } else if (this.value !== '') {
+                    this.style.borderColor = '#f44336';
+                    this.style.background = '#ffebee';
+                } else {
+                    this.style.borderColor = '#ddd';
+                    this.style.background = '';
+                }
+            });
+            
+            qDiv.appendChild(select);
+            wrapper.appendChild(qDiv);
+        });
+        
+        container.appendChild(wrapper);
+    },
+    
+    renderVocabularyGeneric(slide, container) {
+        const grid = document.createElement('div');
+        grid.className = 'vocabulary-grid';
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+        grid.style.gap = '1rem';
+        grid.style.margin = '1rem 0';
+        
+        slide.words.forEach(word => {
+            const item = document.createElement('div');
+            item.className = 'vocab-item';
+            item.style.background = '#f0f4f8';
+            item.style.padding = '1rem';
+            item.style.borderRadius = '8px';
+            item.style.borderLeft = '4px solid #1a3a5c';
+            
+            const wordSpan = document.createElement('div');
+            wordSpan.className = 'vocab-word';
+            wordSpan.textContent = word.word;
+            wordSpan.style.fontWeight = '700';
+            wordSpan.style.color = '#1a3a5c';
+            wordSpan.style.fontSize = '1.1rem';
+            item.appendChild(wordSpan);
+            
+            if (word.definition) {
+                const defSpan = document.createElement('div');
+                defSpan.className = 'vocab-definition';
+                defSpan.textContent = word.definition;
+                defSpan.style.fontSize = '0.95rem';
+                defSpan.style.color = '#4a4a6a';
+                defSpan.style.marginTop = '0.25rem';
+                item.appendChild(defSpan);
+            }
+            
+            if (word.example) {
+                const exampleSpan = document.createElement('div');
+                exampleSpan.className = 'vocab-example';
+                exampleSpan.textContent = `"${word.example}"`;
+                exampleSpan.style.fontStyle = 'italic';
+                exampleSpan.style.color = '#6a6a8a';
+                exampleSpan.style.marginTop = '0.25rem';
+                exampleSpan.style.fontSize = '0.9rem';
+                item.appendChild(exampleSpan);
+            }
+            
+            grid.appendChild(item);
+        });
+        
+        container.appendChild(grid);
     },
     
     addSlideFooter(container, index, lessonData) {
