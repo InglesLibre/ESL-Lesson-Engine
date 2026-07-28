@@ -3,22 +3,7 @@
     {
       "id": "test-lesson",
       "title": "Test Lesson",
-      "description": "A simple test lesson with no images to verify all features work"
-    },
-    {
-      "id": "demo",
-      "title": "Demo Lesson",
-      "description": "A simple demo lesson to test the engine"
-    },
-    {
-      "id": "on-the-move-1",
-      "title": "On the Move - Part 1",
-      "description": "Travel vocabulary and speaking practice"
-    },
-    {
-      "id": "on-the-move-2",
-      "title": "On the Move - Part 2",
-      "description": "Grammar and writing practice"
+      "description": "A simple test lesson with no images"
     },
     {
       "id": "on-the-move-full",
