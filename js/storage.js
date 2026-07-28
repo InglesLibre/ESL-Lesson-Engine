@@ -57,19 +57,20 @@ const Storage = {
     },
     
     showSaveIndicator() {
-        const indicator = document.getElementById('saveIndicator');
+        let indicator = document.getElementById('saveIndicator');
         if (!indicator) {
             const div = document.createElement('div');
             div.id = 'saveIndicator';
             div.className = 'save-indicator';
             div.textContent = 'Progress saved';
             document.body.appendChild(div);
+            indicator = div;
         }
         
-        const el = document.getElementById('saveIndicator');
-        el.classList.add('show');
-        setTimeout(() => {
-            el.classList.remove('show');
+        indicator.classList.add('show');
+        clearTimeout(indicator._timeout);
+        indicator._timeout = setTimeout(() => {
+            indicator.classList.remove('show');
         }, 2000);
     }
 };
