@@ -68,12 +68,7 @@ const App = {
                 console.log('No lessons.json found');
             }
             
-            // If no lessons from manifest, try scanning
-            if (lessons.length === 0) {
-                lessons = await this.scanForLessons();
-            }
-            
-            // If still no lessons, use manual list
+            // If no lessons from manifest, use manual list
             if (lessons.length === 0) {
                 lessons = this.getManualLessonList();
             }
@@ -106,58 +101,12 @@ const App = {
         }
     },
     
-    async scanForLessons() {
-        const lessons = [];
-        
-        // Try GitHub API if on GitHub Pages
-        try {
-            if (window.location.hostname.includes('github.io')) {
-                const repoName = window.location.pathname.split('/')[1] || '';
-                const apiUrl = `https://api.github.com/repos/${window.location.hostname.split('.')[0]}/${repoName}/contents/lessons`;
-                
-                const response = await fetch(apiUrl);
-                if (response.ok) {
-                    const files = await response.json();
-                    const jsonFiles = files.filter(file => 
-                        file.name.endsWith('.json') && 
-                        file.name !== 'lessons.json'
-                    );
-                    
-                    for (const file of jsonFiles) {
-                        try {
-                            const lessonResponse = await fetch(`lessons/${file.name}`);
-                            if (lessonResponse.ok) {
-                                const data = await lessonResponse.json();
-                                lessons.push({
-                                    id: file.name.replace('.json', ''),
-                                    title: data.title || file.name.replace('.json', '').replace(/-/g, ' ')
-                                });
-                            }
-                        } catch (e) {
-                            console.warn(`Could not load ${file.name}`);
-                        }
-                    }
-                }
-            }
-        } catch (e) {
-            console.log('Could not scan via GitHub API');
-        }
-        
-        return lessons;
-    },
-    
     getManualLessonList() {
         // Only include lessons that actually exist
-        const existingLessons = [];
-        
-        // Check which lessons exist by trying to fetch them
-        const possibleLessons = [
+        return [
             { id: 'test-lesson', title: 'Test Lesson' },
             { id: 'on-the-move-full', title: 'On the Move - Full Lesson' }
         ];
-        
-        // Return the list - the app will validate them
-        return possibleLessons;
     },
     
     populateDropdown(lessons) {
@@ -193,7 +142,6 @@ const App = {
     
     async loadLesson(lessonId) {
         try {
-            // Show loading state
             const slideContent = document.getElementById('slideContent');
             slideContent.innerHTML = '<div style="text-align: center; padding: 3rem;">Loading lesson...</div>';
             
@@ -206,25 +154,31 @@ const App = {
             this.currentLesson = lessonId;
             this.currentSlideIndex = 0;
             
+            // Check if slides exist
+            if (!this.lessonData.slides || this.lessonData.slides.length === 0) {
+                slideContent.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #ff9800;">
+                        <h2>Lesson has no slides</h2>
+                        <p>The lesson file "${lessonId}.json" does not contain any slides.</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+                            Please check the JSON structure. It should have a "slides" array.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+            
             // Render the lesson
             Renderer.renderLesson(this.lessonData);
             
-            // Get slide count
-            const slides = document.querySelectorAll('.slide-page');
-            const totalSlides = slides.length;
-            
-            // Update navigation
-            Navigation.updateNavigation(0, totalSlides);
-            
-            // Show first slide
-            Renderer.showSlide(0);
-            
             // Load saved progress
             const saved = Storage.loadProgress(lessonId);
-            if (saved && saved.slideIndex !== undefined && saved.slideIndex < totalSlides) {
-                this.currentSlideIndex = saved.slideIndex;
-                Renderer.showSlide(saved.slideIndex);
-                Navigation.updateNavigation(saved.slideIndex, totalSlides);
+            if (saved && saved.slideIndex !== undefined) {
+                const slides = document.querySelectorAll('.slide-page');
+                if (saved.slideIndex < slides.length) {
+                    this.currentSlideIndex = saved.slideIndex;
+                    Renderer.showSlide(saved.slideIndex);
+                }
             }
             
             // Update title
@@ -237,9 +191,6 @@ const App = {
                 }
             });
             
-            // Show license
-            this.showLicense();
-            
             // Save current lesson to localStorage
             localStorage.setItem('esl_last_lesson', lessonId);
             
@@ -251,7 +202,7 @@ const App = {
                     <h2>Failed to load lesson</h2>
                     <p style="margin-top: 1rem;">${error.message}</p>
                     <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
-                        The lesson file "lessons/${lessonId}.json" was not found.
+                        The lesson file "lessons/${lessonId}.json" was not found or is invalid.
                     </p>
                     <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
                         Please check that the file exists in the lessons folder.
@@ -375,8 +326,8 @@ const App = {
     },
     
     showLicense() {
-        // License is now shown per slide in renderer
-        // This method is kept for compatibility but does nothing
+        // License is shown per slide in renderer
+        // This method is kept for compatibility
     }
 };
 
