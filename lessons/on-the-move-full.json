@@ -1,0 +1,356 @@
+{
+  "title": "On the Move",
+  "level": "B2 First",
+  "description": "This lesson explores travel experiences and holiday preferences through various activities. Students will develop vocabulary, speaking, reading, and grammar skills related to travel.",
+  "objectives": [
+    "Describe holiday experiences using appropriate vocabulary",
+    "Discuss travel preferences and future plans",
+    "Use past and future tenses to talk about holidays",
+    "Understand and use travel-related idioms and expressions",
+    "Participate in speaking activities similar to Cambridge First exam"
+  ],
+  "teacherNotes": [
+    "This lesson is designed for B2 First students preparing for the Cambridge exam",
+    "Speaking Part 1 activities mimic exam format with timed responses",
+    "The grammar discovery section allows students to identify patterns inductively",
+    "Encourage students to use the vocabulary in their speaking responses",
+    "Monitor progress during the matching activity and provide support as needed"
+  ],
+  "estimatedTime": "60-75 minutes",
+  "materials": "Whiteboard, projector, handouts (optional), audio player for listening activities",
+  "slides": [
+    {
+      "type": "Title",
+      "title": "On the Move",
+      "subtitle": "Travel Experiences",
+      "image": "TravelIntro.png",
+      "content": "Explore travel experiences and holiday vocabulary for B2 First preparation"
+    },
+    {
+      "type": "Objectives",
+      "content": "By the end of this lesson, you will be able to:",
+      "objectives": [
+        "Describe holiday experiences using appropriate vocabulary",
+        "Discuss travel preferences and future plans",
+        "Use past and future tenses effectively in conversation",
+        "Understand and use travel-related idioms and expressions"
+      ],
+      "image": "Objectives.png"
+    },
+    {
+      "type": "Ice Breaker",
+      "question": "If you could travel anywhere in the world tomorrow, where would you go and why?",
+      "instructions": "Discuss with a partner for 2 minutes. Try to use at least three travel vocabulary words.",
+      "content": "Think about: destination, transportation, activities, and duration",
+      "image": "IceBreaker.png"
+    },
+    {
+      "type": "Vocabulary",
+      "words": [
+        {
+          "word": "itinerary",
+          "definition": "a planned route or journey",
+          "example": "We checked the itinerary before booking our flights."
+        },
+        {
+          "word": "accommodation",
+          "definition": "a place to stay while traveling",
+          "example": "We need to find accommodation near the beach."
+        },
+        {
+          "word": "landmark",
+          "definition": "a famous or well-known building or place",
+          "example": "The Eiffel Tower is the most famous landmark in Paris."
+        },
+        {
+          "word": "souvenir",
+          "definition": "a memento or keepsake from a trip",
+          "example": "I always buy a souvenir from every country I visit."
+        },
+        {
+          "word": "destination",
+          "definition": "the place where someone is going",
+          "example": "Our destination is the beautiful city of Barcelona."
+        },
+        {
+          "word": "get away from it all",
+          "definition": "to escape from everyday life",
+          "example": "We need a holiday to get away from it all."
+        },
+        {
+          "word": "off the beaten track",
+          "definition": "in a place where few tourists go",
+          "example": "We prefer to stay off the beaten track."
+        },
+        {
+          "word": "travel light",
+          "definition": "to travel with very few belongings",
+          "example": "I always travel light with just one small suitcase."
+        }
+      ],
+      "image": "Vocabulary.png",
+      "content": "Study these travel-related words and try to use them in your speaking practice."
+    },
+    {
+      "type": "Reading",
+      "text": "Read the following text and answer the questions below.",
+      "content": "<h3>A Memorable Journey</h3><p>Last summer, I embarked on a life-changing journey to Southeast Asia. My itinerary included Thailand, Vietnam, and Cambodia over three weeks. I had always wanted to explore this region, and my expectations were exceeded in every way.</p><p>The first stop was Bangkok, where I stayed in a hostel with fellow backpackers from around the world. We shared travel stories and tips about places to visit. From there, I traveled to Chiang Mai, a city known for its temples and vibrant night markets. I bought several souvenirs, including handmade crafts and local artwork.</p><p>One of the most memorable experiences was volunteering at an elephant sanctuary in Chiang Rai. I spent a week caring for rescued elephants, learning about their behavior, and helping with conservation efforts. It was humbling to work alongside local staff who dedicate their lives to protecting these magnificent animals.</p><p>Vietnam offered a different kind of adventure. I explored the bustling streets of Hanoi and took a boat trip through Ha Long Bay, surrounded by limestone islands and emerald waters. I was amazed by the natural beauty and enjoyed trying authentic Vietnamese cuisine.</p><p>I wrapped up my journey in Siem Reap, Cambodia, to visit the ancient temples of Angkor Wat. The intricate carvings and history of the temples left me speechless. It was a perfect ending to a journey that taught me more about myself and the world than I ever imagined.</p>",
+      "questions": [
+        "What was the author's opinion of the trip to Southeast Asia?",
+        "Where did the author stay in Bangkok?",
+        "What did the author do at the elephant sanctuary?",
+        "What did the author find amazing in Vietnam?",
+        "How did the author feel about visiting Angkor Wat?",
+        "What do you think the author learned from this journey?"
+      ],
+      "image": "Reading.png"
+    },
+    {
+      "type": "Grammar Discovery",
+      "examples": [
+        "Last summer, I embarked on a life-changing journey.",
+        "I had always wanted to explore this region.",
+        "I spent a week caring for rescued elephants.",
+        "I took a boat trip through Ha Long Bay.",
+        "I will go back to Asia someday soon.",
+        "Next year, I am planning to visit Africa."
+      ],
+      "question": "Look at these sentences from the reading. What tenses can you identify? How are they used?",
+      "content": "Which sentences describe past experiences? Which describe future plans? What patterns do you notice?",
+      "image": "GrammarDiscovery.png"
+    },
+    {
+      "type": "Grammar Rules",
+      "rules": [
+        {
+          "title": "Past Simple",
+          "description": "Used for completed actions in the past. Form: verb + -ed (regular) or irregular forms. Example: 'I embarked on a journey.'"
+        },
+        {
+          "title": "Past Perfect",
+          "description": "Used for actions completed before another past action. Form: had + past participle. Example: 'I had always wanted to explore.'"
+        },
+        {
+          "title": "Future Plans",
+          "description": "Used to express future intentions and plans. Forms: will + infinitive, be going to + infinitive, present continuous for fixed plans. Example: 'I will go back,' 'I am planning to visit.'"
+        },
+        {
+          "title": "Time Expressions",
+          "description": "Common time markers for past: last summer, three weeks ago, last year. For future: next year, in the future, someday."
+        }
+      ],
+      "image": "GrammarRules.png"
+    },
+    {
+      "type": "Gap Fill",
+      "text": "Complete the sentences with the correct form of the verbs in brackets.\n\n1. Last year, I {{travel}} to Japan for the first time.\n2. Before that, I {{never visit}} an Asian country.\n3. We {{stay}} in a traditional ryokan near Mount Fuji.\n4. The experience {{be}} absolutely unforgettable.\n5. Next summer, I {{go}} back to explore more of Asia.\n6. By then, I {{save}} enough money for the trip.\n7. I {{look forward}} to trying different types of cuisine.\n8. A friend of mine {{recommend}} this destination to me last month.",
+      "answers": [
+        "travelled",
+        "had never visited",
+        "stayed",
+        "was",
+        "will go",
+        "will have saved",
+        "am looking forward",
+        "recommended"
+      ],
+      "image": "GapFill.png",
+      "content": "Think about the context of each sentence. Is the action past, present, or future?"
+    },
+    {
+      "type": "Dropdown",
+      "questions": [
+        {
+          "prompt": "Which expression means to travel without many belongings?",
+          "options": [
+            "travel light",
+            "travel heavy",
+            "travel fast",
+            "travel early"
+          ],
+          "answer": "travel light"
+        },
+        {
+          "prompt": "Which word means a planned route for a journey?",
+          "options": [
+            "destination",
+            "itinerary",
+            "souvenir",
+            "accommodation"
+          ],
+          "answer": "itinerary"
+        },
+        {
+          "prompt": "Which expression means to escape from everyday life?",
+          "options": [
+            "get away from it all",
+            "get lost",
+            "get going",
+            "get ready"
+          ],
+          "answer": "get away from it all"
+        },
+        {
+          "prompt": "Which word describes a place where few tourists go?",
+          "options": [
+            "off the beaten track",
+            "on the main road",
+            "in the city center",
+            "near the coast"
+          ],
+          "answer": "off the beaten track"
+        }
+      ],
+      "image": "Dropdown.png"
+    },
+    {
+      "type": "Matching",
+      "pairs": [
+        {
+          "left": "Itinerary",
+          "right": "A planned route or journey"
+        },
+        {
+          "left": "Accommodation",
+          "right": "A place to stay while traveling"
+        },
+        {
+          "left": "Landmark",
+          "right": "A famous or well-known place"
+        },
+        {
+          "left": "Souvenir",
+          "right": "A memento from a trip"
+        },
+        {
+          "left": "Destination",
+          "right": "The place where someone is going"
+        },
+        {
+          "left": "Travel light",
+          "right": "Travel with very few belongings"
+        }
+      ],
+      "image": "Matching.png",
+      "content": "Match each travel vocabulary word with its correct definition."
+    },
+    {
+      "type": "Multiple Choice",
+      "questions": [
+        {
+          "prompt": "Which of these is the best definition of 'off the beaten track'?",
+          "options": [
+            "A place popular with tourists",
+            "A place where few tourists go",
+            "A place that is difficult to reach",
+            "A place near the city center"
+          ],
+          "answer": "A place where few tourists go",
+          "explanation": "Off the beaten track refers to places that are not visited by many tourists, often more authentic experiences."
+        },
+        {
+          "prompt": "What tense is used in: 'I had never visited Asia before.'?",
+          "options": [
+            "Past Simple",
+            "Present Perfect",
+            "Past Perfect",
+            "Past Continuous"
+          ],
+          "answer": "Past Perfect",
+          "explanation": "The Past Perfect (had + past participle) is used to describe an action completed before another past action."
+        },
+        {
+          "prompt": "Which of these is NOT an example of a future plan expression?",
+          "options": [
+            "I will go back",
+            "I am going to visit",
+            "I visited last year",
+            "I am planning to go"
+          ],
+          "answer": "I visited last year",
+          "explanation": "'I visited last year' is in the past tense and describes a completed past action, not a future plan."
+        },
+        {
+          "prompt": "What is the meaning of 'get away from it all'?",
+          "options": [
+            "To run away from problems",
+            "To escape from everyday life",
+            "To travel to a faraway place",
+            "To leave work early"
+          ],
+          "answer": "To escape from everyday life",
+          "explanation": "Get away from it all means to take a break from normal daily routines and responsibilities."
+        }
+      ],
+      "image": "MultipleChoice.png"
+    },
+    {
+      "type": "Speaking Part 1",
+      "prompt": "Answer the following questions about your travel experiences. Try to give detailed responses and use vocabulary from this lesson.",
+      "questions": [
+        "Where do you usually spend your holidays?",
+        "Where are you going to spend your next holiday?",
+        "What kind of accommodation do you prefer when traveling?",
+        "How do you usually plan your trips?",
+        "What is the most memorable trip you have ever taken?"
+      ],
+      "tips": [
+        "Use the vocabulary we studied in this lesson",
+        "Give reasons for your preferences",
+        "Use past and future tenses appropriately",
+        "Speak for 1-2 minutes for each answer",
+        "Try to use time expressions like 'last summer,' 'next year,' 'in the future'"
+      ],
+      "duration": 120,
+      "enableRecording": true,
+      "image": "Speaking.png",
+      "content": "You have 2 minutes to prepare and 2 minutes to speak for each question."
+    },
+    {
+      "type": "Speaking Part 2",
+      "prompt": "You have 1 minute to prepare. Then, speak for 1-2 minutes about the following topic.",
+      "content": "Compare the advantages and disadvantages of traveling alone versus traveling in a group.",
+      "tips": [
+        "Mention safety, cost, flexibility, and social aspects",
+        "Use comparative language: 'better than,' 'more expensive than,' etc.",
+        "Give examples from your own experience or what you have heard",
+        "Structure your answer: introduction, points for both sides, conclusion"
+      ],
+      "duration": 120,
+      "enableRecording": true,
+      "image": "Speaking2.png"
+    },
+    {
+      "type": "Speaking Part 3",
+      "prompt": "You will have 1 minute to prepare. Then, discuss the following topic with your partner for 3-4 minutes.",
+      "content": "A friend is planning to travel for six months and is considering destinations in Asia. What advice would you give them?",
+      "tips": [
+        "Consider culture, food, budget, language, and safety",
+        "Listen to your partner and respond to their points",
+        "Show interest by asking questions",
+        "Use expressions like: 'That's a good point,' 'I see what you mean,' 'On the other hand...'"
+      ],
+      "duration": 240,
+      "enableRecording": true,
+      "image": "Speaking3.png"
+    },
+    {
+      "type": "Writing",
+      "prompt": "Write a blog post about your ideal holiday destination. Include the following information:",
+      "guidelines": [
+        "Describe where the place is and why you want to go there",
+        "Explain what you would do and see",
+        "Discuss the type of accommodation you would choose",
+        "Use at least 8 vocabulary words from this lesson",
+        "Use a variety of tenses including past, present, and future",
+        "Write 150-200 words"
+      ],
+      "content": "Remember to organize your writing with clear paragraphs and use appropriate connectors.",
+      "image": "Writing.png"
+    },
+    {
+      "type": "Teacher Notes",
+      "content": "This slide contains additional notes and answers for teachers."
+    }
+  ]
+}
