@@ -11,7 +11,7 @@ const App = {
         Storage.init();
         ImageLoader.init();
         
-        // Load lesson list
+        // Load lesson list automatically
         this.loadLessonList();
         
         // Setup event listeners
@@ -51,28 +51,128 @@ const App = {
     
     async loadLessonList() {
         try {
-            // In production, this would fetch from a directory listing
-            // For demo, we'll use a predefined list
-            const lessons = [
-                { id: 'demo', title: 'Demo Lesson' },
-                { id: 'on-the-move-1', title: 'On the Move - Part 1' },
-                { id: 'on-the-move-2', title: 'On the Move - Part 2' }
-            ];
+            // Method 1: Fetch from lessons directory (works on GitHub Pages)
+            const lessons = await this.fetchLessonList();
             
             const select = document.getElementById('lessonSelect');
+            // Clear existing options (except the default)
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Sort lessons alphabetically by title
+            lessons.sort((a, b) => a.title.localeCompare(b.title));
+            
             lessons.forEach(lesson => {
                 const option = document.createElement('option');
                 option.value = lesson.id;
                 option.textContent = lesson.title;
                 select.appendChild(option);
             });
+            
+            // If lessons found, enable the select
+            if (lessons.length > 0) {
+                select.disabled = false;
+            }
+            
+            console.log(`Loaded ${lessons.length} lessons`);
+            
         } catch (error) {
             console.error('Error loading lesson list:', error);
+            // Fallback: try manual list
+            this.loadManualLessonList();
         }
+    },
+    
+    async fetchLessonList() {
+        // Method 1: Try to get list from lessons.json manifest
+        try {
+            const response = await fetch('lessons/lessons.json');
+            if (response.ok) {
+                const manifest = await response.json();
+                return manifest.lessons || [];
+            }
+        } catch (e) {
+            console.log('No lessons.json manifest found, trying directory listing...');
+        }
+        
+        // Method 2: Try GitHub Pages API (if hosted on GitHub)
+        try {
+            // This only works on GitHub Pages
+            const repo = window.location.pathname.split('/')[1] || '';
+            const baseUrl = `https://api.github.com/repos/${window.location.hostname.split('.')[0]}/${repo}/contents/lessons`;
+            
+            const response = await fetch(baseUrl);
+            if (response.ok) {
+                const files = await response.json();
+                const jsonFiles = files.filter(file => 
+                    file.name.endsWith('.json') && file.name !== 'lessons.json'
+                );
+                
+                // Fetch each JSON file to get the title
+                const lessons = await Promise.all(jsonFiles.map(async (file) => {
+                    try {
+                        const lessonResponse = await fetch(`lessons/${file.name}`);
+                        if (lessonResponse.ok) {
+                            const data = await lessonResponse.json();
+                            return {
+                                id: file.name.replace('.json', ''),
+                                title: data.title || file.name.replace('.json', '')
+                            };
+                        }
+                    } catch (e) {
+                        console.warn(`Could not load ${file.name}`);
+                    }
+                    return {
+                        id: file.name.replace('.json', ''),
+                        title: file.name.replace('.json', '').replace(/-/g, ' ')
+                    };
+                }));
+                
+                return lessons;
+            }
+        } catch (e) {
+            console.log('GitHub API not available, scanning local files...');
+        }
+        
+        // Method 3: Generate list from hardcoded patterns or manual list
+        return this.getManualLessonList();
+    },
+    
+    getManualLessonList() {
+        // This will be updated by scanning the lessons folder
+        // You can manually add lessons here as a fallback
+        const manualLessons = [
+            { id: 'demo', title: 'Demo Lesson' },
+            { id: 'on-the-move-1', title: 'On the Move - Part 1' },
+            { id: 'on-the-move-2', title: 'On the Move - Part 2' },
+            { id: 'on-the-move-full', title: 'On the Move - Full Lesson' }
+        ];
+        
+        // Save to localStorage for offline use
+        localStorage.setItem('esl_lesson_manifest', JSON.stringify(manualLessons));
+        
+        return manualLessons;
+    },
+    
+    loadManualLessonList() {
+        const select = document.getElementById('lessonSelect');
+        const lessons = this.getManualLessonList();
+        
+        lessons.forEach(lesson => {
+            const option = document.createElement('option');
+            option.value = lesson.id;
+            option.textContent = lesson.title;
+            select.appendChild(option);
+        });
     },
     
     async loadLesson(lessonId) {
         try {
+            // Show loading state
+            const slideContent = document.getElementById('slideContent');
+            slideContent.innerHTML = '<div style="text-align: center; padding: 3rem;">Loading lesson...</div>';
+            
             const response = await fetch(`lessons/${lessonId}.json`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             this.lessonData = await response.json();
@@ -103,9 +203,19 @@ const App = {
             // Show license
             this.showLicense();
             
+            // Save current lesson to localStorage
+            localStorage.setItem('esl_last_lesson', lessonId);
+            
         } catch (error) {
             console.error('Error loading lesson:', error);
-            alert('Failed to load lesson. Please try again.');
+            const slideContent = document.getElementById('slideContent');
+            slideContent.innerHTML = `
+                <div style="text-align: center; padding: 3rem; color: #f44336;">
+                    <h2>Failed to load lesson</h2>
+                    <p>${error.message}</p>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">Please check that the file exists in the lessons folder.</p>
+                </div>
+            `;
         }
     },
     
@@ -122,11 +232,20 @@ const App = {
         const saved = Storage.loadAllProgress();
         if (saved && Object.keys(saved).length > 0) {
             // Auto-load the last lesson
-            const lastLesson = Object.keys(saved).pop();
-            if (lastLesson) {
+            const lastLesson = localStorage.getItem('esl_last_lesson');
+            if (lastLesson && saved[lastLesson]) {
                 const select = document.getElementById('lessonSelect');
                 select.value = lastLesson;
                 this.loadLesson(lastLesson);
+                return;
+            }
+            
+            // If no last lesson, load the first one
+            const firstLesson = Object.keys(saved)[0];
+            if (firstLesson) {
+                const select = document.getElementById('lessonSelect');
+                select.value = firstLesson;
+                this.loadLesson(firstLesson);
             }
         }
     },
@@ -175,6 +294,10 @@ const App = {
             <div class="note-section">
                 <h3>Estimated Time</h3>
                 <p>${this.lessonData.estimatedTime || '45-60 minutes'}</p>
+            </div>
+            <div class="note-section">
+                <h3>Level</h3>
+                <p>${this.lessonData.level || 'Not specified'}</p>
             </div>
         `;
     },
