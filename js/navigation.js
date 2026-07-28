@@ -14,8 +14,6 @@ const Navigation = {
                 console.log('Previous button clicked');
                 this.prevSlide();
             });
-        } else {
-            console.error('Previous button not found');
         }
         
         if (nextBtn) {
@@ -23,28 +21,13 @@ const Navigation = {
                 console.log('Next button clicked');
                 this.nextSlide();
             });
-        } else {
-            console.error('Next button not found');
         }
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') {
-                console.log('Left arrow pressed');
-                this.prevSlide();
-            }
-            if (e.key === 'ArrowRight') {
-                console.log('Right arrow pressed');
-                this.nextSlide();
-            }
-        });
         
         console.log('Navigation initialized');
     },
     
     nextSlide() {
         console.log('nextSlide called, currentIndex:', this.currentIndex);
-        console.log('Total slides:', this.totalSlides);
         
         if (this.currentIndex < this.totalSlides - 1) {
             this.currentIndex++;
@@ -52,15 +35,11 @@ const Navigation = {
             
             if (typeof Renderer !== 'undefined') {
                 Renderer.showSlide(this.currentIndex);
-            } else {
-                console.error('Renderer not defined');
             }
             
             if (typeof App !== 'undefined') {
                 App.currentSlideIndex = this.currentIndex;
             }
-        } else {
-            console.log('Already at last slide');
         }
     },
     
@@ -73,23 +52,18 @@ const Navigation = {
             
             if (typeof Renderer !== 'undefined') {
                 Renderer.showSlide(this.currentIndex);
-            } else {
-                console.error('Renderer not defined');
             }
             
             if (typeof App !== 'undefined') {
                 App.currentSlideIndex = this.currentIndex;
             }
-        } else {
-            console.log('Already at first slide');
         }
     },
     
     goToSlide(index) {
         console.log('goToSlide called with index:', index);
         
-        const slides = document.querySelectorAll('.slide-page');
-        if (index >= 0 && index < slides.length) {
+        if (index >= 0 && index < this.totalSlides) {
             this.currentIndex = index;
             
             if (typeof Renderer !== 'undefined') {
@@ -113,11 +87,9 @@ const Navigation = {
         
         if (prevBtn) {
             prevBtn.disabled = current === 0;
-            console.log('Prev button disabled:', prevBtn.disabled);
         }
         if (nextBtn) {
             nextBtn.disabled = current === total - 1;
-            console.log('Next button disabled:', nextBtn.disabled);
         }
     }
 };
