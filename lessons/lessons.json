@@ -1,14 +1,25 @@
 {
   "lessons": [
     {
-      "id": "test-lesson",
-      "title": "Test Lesson",
-      "description": "A simple test lesson with no images"
+      "id": "on-the-move-1",
+      "title": "On the Move - Part 1",
+      "description": "Travel vocabulary and speaking practice",
+      "level": "B2",
+      "exam": "Cambridge B2 First"
     },
     {
-      "id": "on-the-move-full",
-      "title": "On the Move - Full Lesson",
-      "description": "Complete B2 First lesson on travel experiences"
+      "id": "lifestyles",
+      "title": "Lifestyles",
+      "description": "Discussing different ways of life",
+      "level": "B1",
+      "exam": "General English"
+    },
+    {
+      "id": "demo",
+      "title": "Demo Lesson",
+      "description": "A simple demo lesson to test the engine",
+      "level": "A2",
+      "exam": "General English"
     }
   ]
 }
