@@ -1,6 +1,7 @@
-// Slide Renderer - Fixed Version
+// Slide Renderer - Final Fixed Version
 const Renderer = {
     currentIndex: 0,
+    slides: [],
     
     renderLesson(lessonData) {
         console.log('renderLesson called with:', lessonData);
@@ -28,6 +29,9 @@ const Renderer = {
         
         console.log('Rendering', lessonData.slides.length, 'slides');
         
+        // Store slides for later use
+        this.slides = [];
+        
         // Create each slide and append to container
         lessonData.slides.forEach((slide, index) => {
             console.log(`Creating slide ${index}:`, slide.type);
@@ -46,18 +50,15 @@ const Renderer = {
             
             // Append to container
             container.appendChild(slideDiv);
+            this.slides.push(slideDiv);
             console.log(`Slide ${index} appended to container`);
         });
         
-        // Get all slides and show the first one
+        // Get all slides from container
         const allSlides = container.querySelectorAll('.slide-page');
         console.log('Total slides created:', allSlides.length);
         
         if (allSlides.length > 0) {
-            // Show the first slide
-            allSlides[0].style.display = 'block';
-            console.log('First slide displayed');
-            
             // Update counter
             const counter = document.getElementById('slideCounter');
             if (counter) {
@@ -71,13 +72,15 @@ const Renderer = {
             if (typeof Navigation !== 'undefined') {
                 Navigation.updateNavigation(0, lessonData.slides.length);
             }
+            
+            // Show the first slide
+            this.showSlide(0);
+            
+            console.log('Lesson rendered successfully');
         } else {
             console.error('No slides were created!');
             container.innerHTML = '<div style="text-align: center; padding: 3rem; color: #f44336;">No slides were created!</div>';
-            return;
         }
-        
-        console.log('Lesson rendered successfully');
     },
     
     renderSlide(slide, container, index, lessonData) {
@@ -563,19 +566,34 @@ const Renderer = {
         }
         
         const slides = container.querySelectorAll('.slide-page');
-        console.log('Found slides:', slides.length);
+        console.log('Found slides in showSlide:', slides.length);
         
         if (!slides || slides.length === 0) {
             console.warn('No slides found in container');
-            container.innerHTML = `
-                <div style="text-align: center; padding: 3rem; color: #ff9800;">
-                    <h2>No slides to display</h2>
-                    <p>The lesson file appears to be empty or corrupted.</p>
-                    <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
-                        Try selecting a different lesson from the dropdown.
-                    </p>
-                </div>
-            `;
+            // Try to find slides in the container's children
+            const children = container.children;
+            console.log('Container children:', children.length);
+            
+            // Check if any children have the slide-page class
+            let hasSlideClass = false;
+            for (let i = 0; i < children.length; i++) {
+                if (children[i].classList && children[i].classList.contains('slide-page')) {
+                    hasSlideClass = true;
+                    break;
+                }
+            }
+            
+            if (!hasSlideClass) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #ff9800;">
+                        <h2>No slides to display</h2>
+                        <p>The lesson file appears to be empty or corrupted.</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+                            Try selecting a different lesson from the dropdown.
+                        </p>
+                    </div>
+                `;
+            }
             return;
         }
         
@@ -604,7 +622,7 @@ const Renderer = {
             App.saveProgress();
         }
         
-        console.log('Slide display updated');
+        console.log('Slide display updated, showing slide', index);
     }
 };
 
