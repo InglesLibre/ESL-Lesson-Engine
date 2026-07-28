@@ -54,9 +54,13 @@ const Renderer = {
             console.log(`Slide ${index} appended to container, total slides now: ${this.slideElements.length}`);
         });
         
-        // Now get all slides from the container
-        const allSlides = container.querySelectorAll('.slide-page');
-        console.log('Total slides in container (querySelectorAll):', allSlides.length);
+        // Update Navigation with total slides
+        if (typeof Navigation !== 'undefined') {
+            Navigation.totalSlides = this.slideElements.length;
+            Navigation.currentIndex = 0;
+            console.log('Navigation totalSlides set to:', Navigation.totalSlides);
+        }
+        
         console.log('Total slides in array:', this.slideElements.length);
         
         if (this.slideElements.length > 0) {
@@ -68,11 +72,6 @@ const Renderer = {
             
             // Update progress
             this.updateProgress(0, lessonData.slides.length);
-            
-            // Update navigation
-            if (typeof Navigation !== 'undefined') {
-                Navigation.updateNavigation(0, lessonData.slides.length);
-            }
             
             // Show the first slide
             this.showSlide(0);
@@ -938,10 +937,24 @@ const Renderer = {
             counter.textContent = `Slide ${index + 1} of ${this.slideElements.length}`;
         }
         
+        // Update navigation buttons
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        if (prevBtn) prevBtn.disabled = index === 0;
-        if (nextBtn) nextBtn.disabled = index === this.slideElements.length - 1;
+        if (prevBtn) {
+            prevBtn.disabled = index === 0;
+            console.log('Prev button disabled:', prevBtn.disabled);
+        }
+        if (nextBtn) {
+            nextBtn.disabled = index === this.slideElements.length - 1;
+            console.log('Next button disabled:', nextBtn.disabled);
+        }
+        
+        // Update navigation state
+        if (typeof Navigation !== 'undefined') {
+            Navigation.currentIndex = index;
+            Navigation.totalSlides = this.slideElements.length;
+            console.log('Updated Navigation state - currentIndex:', Navigation.currentIndex, 'totalSlides:', Navigation.totalSlides);
+        }
         
         this.currentIndex = index;
         if (typeof App !== 'undefined') {
