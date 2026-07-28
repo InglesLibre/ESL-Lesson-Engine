@@ -1,23 +1,34 @@
-// Simple router for GitHub Pages compatibility
+// Router - Handles URL routing for GitHub Pages
 const Router = {
     currentRoute: '',
     
     init() {
-        window.addEventListener('hashchange', () => this.handleRoute());
-        window.addEventListener('load', () => this.handleRoute());
+        console.log('Router initializing...');
+        
+        // Handle hash changes
+        window.addEventListener('hashchange', () => {
+            this.handleRoute();
+        });
+        
+        // Handle initial load
+        window.addEventListener('load', () => {
+            this.handleRoute();
+        });
+        
+        console.log('Router initialized');
     },
     
     handleRoute() {
         const hash = window.location.hash.slice(1) || '/';
         this.currentRoute = hash;
+        console.log('Route changed to:', hash);
         
         if (hash.startsWith('lesson/')) {
             const lessonId = hash.split('/')[1];
-            if (lessonId) {
+            if (lessonId && typeof App !== 'undefined') {
                 App.loadLesson(lessonId);
             }
         } else if (hash === '/') {
-            // Home - show lesson selection
             this.showHome();
         }
     },
@@ -26,12 +37,17 @@ const Router = {
         window.location.hash = route;
     },
     
+    navigateToLesson(lessonId) {
+        this.navigateTo(`lesson/${lessonId}`);
+    },
+    
     showHome() {
-        // Show lesson selection interface
         const slideContent = document.getElementById('slideContent');
+        if (!slideContent) return;
+        
         slideContent.innerHTML = `
             <div class="home-screen">
-                <h1>Welcome to ESL Lesson Engine</h1>
+                <h1>Welcome to ESL Lesson Generator</h1>
                 <p>Select a lesson from the dropdown above to begin.</p>
                 <div class="feature-grid">
                     <div class="feature-card">
@@ -43,11 +59,13 @@ const Router = {
                         <p>Your progress is saved automatically</p>
                     </div>
                     <div class="feature-card">
-                        <h3>Two Themes</h3>
-                        <p>Baltic Blue and School Bus Yellow</p>
+                        <h3>Exam Preparation</h3>
+                        <p>Cambridge B2 First focused content</p>
                     </div>
                 </div>
             </div>
         `;
     }
 };
+
+console.log('Router loaded successfully');
