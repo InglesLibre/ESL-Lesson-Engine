@@ -3,6 +3,8 @@ const App = {
     currentLesson: null,
     currentSlideIndex: 0,
     lessonData: null,
+    slideTypes: {},
+    isFullscreen: false,
     
     init() {
         console.log('App initializing...');
@@ -13,13 +15,57 @@ const App = {
         Storage.init();
         ImageLoader.init();
         
-        // Load saved theme FIRST
+        // Register slide types
+        this.registerSlideTypes();
+        
+        // Load saved theme
         this.loadSavedTheme();
         
-        // Load lesson list automatically
+        // Load lesson list
         this.loadLessonList();
         
         // Setup event listeners
+        this.setupEventListeners();
+        
+        // Setup keyboard shortcuts
+        this.setupKeyboardShortcuts();
+        
+        // Auto-save progress
+        setInterval(() => {
+            this.saveProgress();
+        }, 30000);
+        
+        console.log('App initialized');
+    },
+    
+    registerSlideTypes() {
+        // Register all available slide types
+        this.slideTypes = {
+            'Title': SlideTitle,
+            'Speaking Part 1': SlideSpeaking,
+            'Speaking Part 2': SlideSpeaking,
+            'Speaking Part 3': SlideSpeaking,
+            'Grammar Discovery': SlideGrammar,
+            'Grammar Rules': SlideGrammar,
+            'Vocabulary': SlideVocabulary,
+            'Teacher Notes': SlideTeacherNotes,
+            'Objectives': SlideTitle, // Fallback to Title renderer
+            'Ice Breaker': SlideSpeaking, // Fallback to Speaking renderer
+            'Reading': SlideTitle, // Fallback
+            'Listening': SlideTitle, // Fallback
+            'Writing': SlideTitle, // Fallback
+            'Gap Fill': SlideTitle, // Fallback
+            'Dropdown': SlideTitle, // Fallback
+            'Matching': SlideTitle, // Fallback
+            'Drag & Drop': SlideTitle, // Fallback
+            'Multiple Choice': SlideTitle // Fallback
+        };
+        
+        console.log('Slide types registered:', Object.keys(this.slideTypes));
+    },
+    
+    setupEventListeners() {
+        // Lesson selector
         const lessonSelect = document.getElementById('lessonSelect');
         if (lessonSelect) {
             lessonSelect.addEventListener('change', (e) => {
@@ -29,20 +75,37 @@ const App = {
             });
         }
         
-        const teacherNotesToggle = document.getElementById('teacherNotesToggle');
-        if (teacherNotesToggle) {
-            teacherNotesToggle.addEventListener('click', () => {
-                this.toggleTeacherNotes();
+        // Teacher notes toggle
+        const notesToggle = document.getElementById('teacherNotesToggle');
+        if (notesToggle) {
+            notesToggle.addEventListener('click', () => {
+                this.togglePanel('teacherNotesPanel');
             });
         }
         
-        const closeNotesBtn = document.getElementById('closeNotesBtn');
-        if (closeNotesBtn) {
-            closeNotesBtn.addEventListener('click', () => {
-                this.hideTeacherNotes();
+        const closeNotes = document.getElementById('closeNotesBtn');
+        if (closeNotes) {
+            closeNotes.addEventListener('click', () => {
+                this.closePanel('teacherNotesPanel');
             });
         }
         
+        // Table of contents toggle
+        const tocToggle = document.getElementById('tocToggle');
+        if (tocToggle) {
+            tocToggle.addEventListener('click', () => {
+                this.togglePanel('tocPanel');
+            });
+        }
+        
+        const closeToc = document.getElementById('closeTocBtn');
+        if (closeToc) {
+            closeToc.addEventListener('click', () => {
+                this.closePanel('tocPanel');
+            });
+        }
+        
+        // Theme toggle
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
@@ -50,22 +113,50 @@ const App = {
             });
         }
         
-        // Keyboard shortcuts
+        // Fullscreen toggle
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', () => {
+                this.toggleFullscreen();
+            });
+        }
+        
+        // Print button
+        const printBtn = document.getElementById('printBtn');
+        if (printBtn) {
+            printBtn.addEventListener('click', () => {
+                window.print();
+            });
+        }
+    },
+    
+    setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
+            // Arrow keys for navigation
             if (e.key === 'ArrowLeft') Navigation.prevSlide();
             if (e.key === 'ArrowRight') Navigation.nextSlide();
-            if (e.key === 'n' || e.key === 'N') this.toggleTeacherNotes();
+            
+            // 'n' for teacher notes
+            if (e.key === 'n' || e.key === 'N') {
+                this.togglePanel('teacherNotesPanel');
+            }
+            
+            // 't' for table of contents
+            if (e.key === 't' || e.key === 'T') {
+                this.togglePanel('tocPanel');
+            }
+            
+            // 'f' for fullscreen
+            if (e.key === 'f' || e.key === 'F') {
+                this.toggleFullscreen();
+            }
+            
+            // Escape for closing panels
+            if (e.key === 'Escape') {
+                this.closePanel('teacherNotesPanel');
+                this.closePanel('tocPanel');
+            }
         });
-        
-        // Save progress periodically
-        setInterval(() => {
-            this.saveProgress();
-        }, 30000);
-        
-        // Load saved state AFTER lesson list is loaded
-        // We'll handle this in loadLessonList completion
-        
-        console.log('App initialized');
     },
     
     async loadLessonList() {
@@ -81,133 +172,58 @@ const App = {
                     const manifest = await response.json();
                     lessons = manifest.lessons || [];
                     console.log('Loaded lessons from manifest:', lessons);
-                } else {
-                    console.log('lessons.json not found, using manual list');
                 }
             } catch (e) {
-                console.log('Error loading manifest:', e);
+                console.log('No lessons.json found');
             }
             
-            // If no lessons from manifest, use manual list
+            // If no lessons, use fallback
             if (lessons.length === 0) {
-                lessons = this.getManualLessonList();
-                console.log('Using manual lesson list:', lessons);
+                lessons = this.getDefaultLessons();
             }
             
-            // Validate lessons - check if files exist
+            // Validate lessons
             const validLessons = [];
             for (const lesson of lessons) {
                 try {
                     const response = await fetch(`lessons/${lesson.id}.json`);
                     if (response.ok) {
                         validLessons.push(lesson);
-                        console.log(`Lesson ${lesson.id} found`);
-                    } else {
-                        console.warn(`Lesson ${lesson.id} not found, skipping`);
                     }
                 } catch (e) {
-                    console.warn(`Could not verify lesson ${lesson.id}`);
+                    console.warn(`Lesson ${lesson.id} not found`);
                 }
             }
             
-            // Update the dropdown
             this.populateDropdown(validLessons);
             
-            console.log(`Loaded ${validLessons.length} valid lessons`);
-            
-            // If no valid lessons, show a message
-            if (validLessons.length === 0) {
-                const container = document.getElementById('slideContent');
-                if (container) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 3rem; color: #ff9800;">
-                            <h2>No lessons found</h2>
-                            <p>Please add lesson JSON files to the "lessons" folder.</p>
-                            <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
-                                Expected format: lessons/lesson-name.json
-                            </p>
-                        </div>
-                    `;
-                }
-                return;
+            // Auto-load first lesson
+            if (validLessons.length > 0) {
+                this.autoLoadLesson(validLessons);
             }
-            
-            // Auto-load the first lesson if no saved state
-            this.autoLoadFirstLesson(validLessons);
             
         } catch (error) {
             console.error('Error loading lesson list:', error);
-            // Fallback to manual list
-            const manualLessons = this.getManualLessonList();
-            this.populateDropdown(manualLessons);
-            
-            // Auto-load from manual list
-            if (manualLessons.length > 0) {
-                this.autoLoadFirstLesson(manualLessons);
-            }
         }
     },
     
-    autoLoadFirstLesson(lessons) {
-        console.log('Auto-loading first lesson...');
-        
-        // Check if we should load saved state first
-        const lastLesson = localStorage.getItem('esl_last_lesson');
-        if (lastLesson) {
-            // Check if the lesson exists
-            const lessonExists = lessons.some(l => l.id === lastLesson);
-            if (lessonExists) {
-                const select = document.getElementById('lessonSelect');
-                if (select) {
-                    select.value = lastLesson;
-                    this.loadLesson(lastLesson);
-                    return;
-                }
-            }
-        }
-        
-        // Load the first lesson
-        if (lessons.length > 0) {
-            const firstLesson = lessons[0];
-            const select = document.getElementById('lessonSelect');
-            if (select) {
-                select.value = firstLesson.id;
-                this.loadLesson(firstLesson.id);
-            }
-        }
-    },
-    
-    getManualLessonList() {
-        // Only include lessons that actually exist
+    getDefaultLessons() {
         return [
-            { id: 'test-lesson', title: 'Test Lesson' },
-            { id: 'on-the-move-full', title: 'On the Move - Full Lesson' }
+            { id: 'demo', title: 'Demo Lesson' },
+            { id: 'on-the-move-1', title: 'On the Move - Part 1' },
+            { id: 'lifestyles', title: 'Lifestyles' }
         ];
     },
     
     populateDropdown(lessons) {
         const select = document.getElementById('lessonSelect');
-        if (!select) {
-            console.error('Lesson select element not found');
-            return;
-        }
+        if (!select) return;
         
-        // Clear existing options (keep the first default option)
+        // Clear existing options
         while (select.options.length > 1) {
             select.remove(1);
         }
         
-        if (lessons.length === 0) {
-            const option = document.createElement('option');
-            option.value = '';
-            option.textContent = 'No lessons available';
-            option.disabled = true;
-            select.appendChild(option);
-            select.disabled = true;
-            return;
-        }
-        
-        // Sort lessons alphabetically by title
         lessons.sort((a, b) => a.title.localeCompare(b.title));
         
         lessons.forEach(lesson => {
@@ -221,85 +237,64 @@ const App = {
         console.log(`Populated dropdown with ${lessons.length} lessons`);
     },
     
+    autoLoadLesson(lessons) {
+        // Check for last lesson
+        const lastLesson = localStorage.getItem('esl_last_lesson');
+        if (lastLesson) {
+            const exists = lessons.some(l => l.id === lastLesson);
+            if (exists) {
+                const select = document.getElementById('lessonSelect');
+                if (select) {
+                    select.value = lastLesson;
+                    this.loadLesson(lastLesson);
+                    return;
+                }
+            }
+        }
+        
+        // Load first lesson
+        if (lessons.length > 0) {
+            const first = lessons[0];
+            const select = document.getElementById('lessonSelect');
+            if (select) {
+                select.value = first.id;
+                this.loadLesson(first.id);
+            }
+        }
+    },
+    
     async loadLesson(lessonId) {
         console.log(`Loading lesson: ${lessonId}`);
         
         try {
             const slideContent = document.getElementById('slideContent');
-            if (!slideContent) {
-                console.error('Slide content element not found');
-                return;
-            }
+            if (!slideContent) return;
             
-            slideContent.innerHTML = '<div style="text-align: center; padding: 3rem;">Loading lesson...</div>';
+            slideContent.innerHTML = '<div class="loading-state">Loading lesson...</div>';
             
             const response = await fetch(`lessons/${lessonId}.json`);
             if (!response.ok) {
-                throw new Error(`Lesson "${lessonId}" not found (404)`);
+                throw new Error(`Lesson "${lessonId}" not found`);
             }
             
             this.lessonData = await response.json();
             this.currentLesson = lessonId;
             this.currentSlideIndex = 0;
             
-            console.log('Lesson data loaded:', this.lessonData);
-            
-            // Check if slides exist
-            if (!this.lessonData.slides || this.lessonData.slides.length === 0) {
-                slideContent.innerHTML = `
-                    <div style="text-align: center; padding: 3rem; color: #ff9800;">
-                        <h2>Lesson has no slides</h2>
-                        <p>The lesson file "${lessonId}.json" does not contain any slides.</p>
-                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
-                            Please check the JSON structure. It should have a "slides" array.
-                        </p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Check if Renderer exists
-            if (typeof Renderer === 'undefined') {
-                console.error('Renderer is not defined!');
-                slideContent.innerHTML = `
-                    <div style="text-align: center; padding: 3rem; color: #f44336;">
-                        <h2>Renderer not loaded</h2>
-                        <p>The renderer.js file did not load correctly.</p>
-                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
-                            Please check that renderer.js exists and is loaded.
-                        </p>
-                    </div>
-                `;
-                return;
-            }
+            // Update metadata
+            this.updateMetadata(this.lessonData);
             
             // Render the lesson
             Renderer.renderLesson(this.lessonData);
             
-            // Load saved progress
-            const saved = Storage.loadProgress(lessonId);
-            if (saved && saved.slideIndex !== undefined) {
-                const slides = document.querySelectorAll('.slide-page');
-                if (saved.slideIndex < slides.length) {
-                    this.currentSlideIndex = saved.slideIndex;
-                    Renderer.showSlide(saved.slideIndex);
-                }
-            }
-            
             // Update title
-            document.title = `${this.lessonData.title} - ESL Lesson Engine`;
+            document.title = `${this.lessonData.metadata?.title || 'Lesson'} - ESL Lesson Generator`;
             
-            // Preload images (if any)
-            if (this.lessonData.slides) {
-                this.lessonData.slides.forEach(slide => {
-                    if (slide.image) {
-                        ImageLoader.preloadImage(slide.image);
-                    }
-                });
-            }
-            
-            // Save current lesson to localStorage
+            // Save last lesson
             localStorage.setItem('esl_last_lesson', lessonId);
+            
+            // Generate TOC
+            this.generateTOC();
             
             console.log(`Lesson ${lessonId} loaded successfully`);
             
@@ -308,18 +303,140 @@ const App = {
             const slideContent = document.getElementById('slideContent');
             if (slideContent) {
                 slideContent.innerHTML = `
-                    <div style="text-align: center; padding: 3rem; color: #f44336;">
+                    <div class="error-state">
                         <h2>Failed to load lesson</h2>
-                        <p style="margin-top: 1rem;">${error.message}</p>
-                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
-                            The lesson file "lessons/${lessonId}.json" was not found or is invalid.
-                        </p>
-                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
-                            Please check that the file exists in the lessons folder.
-                        </p>
+                        <p>${error.message}</p>
                     </div>
                 `;
             }
+        }
+    },
+    
+    updateMetadata(lessonData) {
+        const metadata = lessonData.metadata || {};
+        
+        const levelEl = document.getElementById('slideLevel');
+        if (levelEl) {
+            levelEl.innerHTML = `Level: <strong>${metadata.level || 'Not specified'}</strong>`;
+        }
+        
+        const examEl = document.getElementById('slideExam');
+        if (examEl) {
+            examEl.innerHTML = `Exam: <strong>${metadata.exam || 'General'}</strong>`;
+        }
+        
+        const durationEl = document.getElementById('slideTimer');
+        if (durationEl) {
+            const duration = metadata.duration || 0;
+            const minutes = Math.floor(duration / 60);
+            const seconds = duration % 60;
+            durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+    },
+    
+    generateTOC() {
+        const content = document.getElementById('tocContent');
+        if (!content || !this.lessonData) return;
+        
+        const slides = this.lessonData.slides || [];
+        let html = '<ul class="toc-list">';
+        
+        slides.forEach((slide, index) => {
+            const title = slide.title || slide.type || `Slide ${index + 1}`;
+            html += `
+                <li class="toc-item">
+                    <span class="toc-number">${index + 1}</span>
+                    <span class="toc-title">${title}</span>
+                    <span class="toc-type">${slide.type || 'content'}</span>
+                    <button class="toc-go-btn" data-index="${index}">Go</button>
+                </li>
+            `;
+        });
+        
+        html += '</ul>';
+        content.innerHTML = html;
+        
+        // Add click handlers
+        content.querySelectorAll('.toc-go-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const index = parseInt(btn.dataset.index);
+                Navigation.goToSlide(index);
+                this.closePanel('tocPanel');
+            });
+        });
+    },
+    
+    togglePanel(panelId) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+        
+        const isVisible = panel.style.display !== 'none';
+        panel.style.display = isVisible ? 'none' : 'block';
+        
+        if (!isVisible) {
+            // Refresh content if needed
+            if (panelId === 'teacherNotesPanel') {
+                this.populateTeacherNotes();
+            }
+        }
+    },
+    
+    closePanel(panelId) {
+        const panel = document.getElementById(panelId);
+        if (panel) {
+            panel.style.display = 'none';
+        }
+    },
+    
+    populateTeacherNotes() {
+        const content = document.getElementById('teacherNotesContent');
+        if (!content || !this.lessonData) return;
+        
+        const notes = this.lessonData.teacherNotes || [];
+        let html = '';
+        
+        if (typeof notes === 'string') {
+            html = `<p>${notes}</p>`;
+        } else if (Array.isArray(notes)) {
+            html = `<ul>${notes.map(n => `<li>${n}</li>`).join('')}</ul>`;
+        } else {
+            html = '<p>No teacher notes available.</p>';
+        }
+        
+        content.innerHTML = html;
+    },
+    
+    toggleTheme() {
+        const body = document.body;
+        const currentTheme = body.classList.contains('theme-yellow') ? 'yellow' : 'default';
+        const newTheme = currentTheme === 'yellow' ? 'default' : 'yellow';
+        
+        body.classList.toggle('theme-yellow');
+        Storage.saveTheme(newTheme);
+        
+        const toggle = document.getElementById('themeToggle');
+        if (toggle) {
+            toggle.textContent = newTheme === 'yellow' ? '🎨' : '🎨';
+            toggle.title = newTheme === 'yellow' ? 'Switch to Baltic Blue' : 'Switch to School Bus Yellow';
+        }
+    },
+    
+    loadSavedTheme() {
+        const theme = Storage.loadTheme();
+        if (theme === 'yellow') {
+            document.body.classList.add('theme-yellow');
+        }
+    },
+    
+    toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log('Fullscreen not supported');
+            });
+        } else {
+            document.exitFullscreen().catch(err => {
+                console.log('Exit fullscreen failed');
+            });
         }
     },
     
@@ -330,108 +447,10 @@ const App = {
                 timestamp: Date.now()
             });
         }
-    },
-    
-    loadSavedState() {
-        // This is now handled in autoLoadFirstLesson
-        // Kept for compatibility
-    },
-    
-    toggleTeacherNotes() {
-        const panel = document.getElementById('teacherNotesPanel');
-        if (!panel) return;
-        
-        const isVisible = panel.style.display !== 'none';
-        panel.style.display = isVisible ? 'none' : 'block';
-        
-        if (!isVisible && this.lessonData) {
-            this.showTeacherNotes();
-        }
-    },
-    
-    hideTeacherNotes() {
-        const panel = document.getElementById('teacherNotesPanel');
-        if (panel) panel.style.display = 'none';
-    },
-    
-    showTeacherNotes() {
-        const content = document.getElementById('teacherNotesContent');
-        if (!content) return;
-        
-        const notes = this.lessonData.teacherNotes || 'No teacher notes available for this lesson.';
-        
-        content.innerHTML = `
-            <div class="note-section">
-                <h3>Lesson Overview</h3>
-                <p>${this.lessonData.description || 'No description available.'}</p>
-            </div>
-            <div class="note-section">
-                <h3>Objectives</h3>
-                ${this.lessonData.objectives ? 
-                    `<ul>${this.lessonData.objectives.map(obj => `<li>${obj}</li>`).join('')}</ul>` :
-                    '<p>No objectives listed.</p>'
-                }
-            </div>
-            <div class="note-section">
-                <h3>Teaching Notes</h3>
-                ${typeof notes === 'string' ? 
-                    `<p>${notes}</p>` :
-                    notes.map(note => `<p>• ${note}</p>`).join('')
-                }
-            </div>
-            <div class="note-section">
-                <h3>Materials</h3>
-                <p>${this.lessonData.materials || 'Standard classroom materials.'}</p>
-            </div>
-            <div class="note-section">
-                <h3>Estimated Time</h3>
-                <p>${this.lessonData.estimatedTime || '45-60 minutes'}</p>
-            </div>
-            <div class="note-section">
-                <h3>Level</h3>
-                <p>${this.lessonData.level || 'Not specified'}</p>
-            </div>
-        `;
-    },
-    
-    toggleTheme() {
-        const body = document.body;
-        body.classList.toggle('theme-yellow');
-        
-        // Save theme preference
-        const currentTheme = body.classList.contains('theme-yellow') ? 'yellow' : 'default';
-        Storage.saveTheme(currentTheme);
-        
-        // Update toggle text
-        const toggle = document.getElementById('themeToggle');
-        if (toggle) {
-            toggle.textContent = body.classList.contains('theme-yellow') ? 
-                'Switch to Baltic Blue' : 
-                'Switch to School Bus Yellow';
-        }
-    },
-    
-    loadSavedTheme() {
-        const theme = Storage.loadTheme();
-        const toggle = document.getElementById('themeToggle');
-        
-        if (theme === 'yellow') {
-            document.body.classList.add('theme-yellow');
-            if (toggle) toggle.textContent = 'Switch to Baltic Blue';
-        } else {
-            document.body.classList.remove('theme-yellow');
-            if (toggle) toggle.textContent = 'Switch to School Bus Yellow';
-        }
-    },
-    
-    showLicense() {
-        // License is shown per slide in renderer
-        // This method is kept for compatibility
     }
 };
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM ready, initializing App...');
     App.init();
 });
