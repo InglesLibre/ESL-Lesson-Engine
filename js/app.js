@@ -11,6 +11,9 @@ const App = {
         Storage.init();
         ImageLoader.init();
         
+        // Load saved theme FIRST
+        this.loadSavedTheme();
+        
         // Load lesson list automatically
         this.loadLessonList();
         
@@ -51,7 +54,7 @@ const App = {
     
     async loadLessonList() {
         try {
-            // Method 1: Fetch from lessons directory (works on GitHub Pages)
+            // Method 1: Try to load manifest
             const lessons = await this.fetchLessonList();
             
             const select = document.getElementById('lessonSelect');
@@ -93,55 +96,57 @@ const App = {
                 return manifest.lessons || [];
             }
         } catch (e) {
-            console.log('No lessons.json manifest found, trying directory listing...');
+            console.log('No lessons.json manifest found');
         }
         
-        // Method 2: Try GitHub Pages API (if hosted on GitHub)
+        // Method 2: Try to scan for JSON files
         try {
-            // This only works on GitHub Pages
-            const repo = window.location.pathname.split('/')[1] || '';
-            const baseUrl = `https://api.github.com/repos/${window.location.hostname.split('.')[0]}/${repo}/contents/lessons`;
-            
-            const response = await fetch(baseUrl);
-            if (response.ok) {
-                const files = await response.json();
-                const jsonFiles = files.filter(file => 
-                    file.name.endsWith('.json') && file.name !== 'lessons.json'
-                );
+            // Try GitHub Pages API first
+            if (window.location.hostname.includes('github.io')) {
+                const repoPath = window.location.pathname.split('/').slice(1, 2).join('/');
+                const apiUrl = `https://api.github.com/repos/${window.location.hostname.split('.')[0]}/${repoPath}/contents/lessons`;
                 
-                // Fetch each JSON file to get the title
-                const lessons = await Promise.all(jsonFiles.map(async (file) => {
-                    try {
-                        const lessonResponse = await fetch(`lessons/${file.name}`);
-                        if (lessonResponse.ok) {
-                            const data = await lessonResponse.json();
-                            return {
-                                id: file.name.replace('.json', ''),
-                                title: data.title || file.name.replace('.json', '')
-                            };
+                const response = await fetch(apiUrl);
+                if (response.ok) {
+                    const files = await response.json();
+                    const jsonFiles = files.filter(file => 
+                        file.name.endsWith('.json') && file.name !== 'lessons.json'
+                    );
+                    
+                    const lessons = await Promise.all(jsonFiles.map(async (file) => {
+                        try {
+                            const lessonResponse = await fetch(`lessons/${file.name}`);
+                            if (lessonResponse.ok) {
+                                const data = await lessonResponse.json();
+                                return {
+                                    id: file.name.replace('.json', ''),
+                                    title: data.title || file.name.replace('.json', '').replace(/-/g, ' ')
+                                };
+                            }
+                        } catch (e) {
+                            console.warn(`Could not load ${file.name}`);
                         }
-                    } catch (e) {
-                        console.warn(`Could not load ${file.name}`);
+                        return {
+                            id: file.name.replace('.json', ''),
+                            title: file.name.replace('.json', '').replace(/-/g, ' ')
+                        };
+                    }));
+                    
+                    if (lessons.length > 0) {
+                        return lessons;
                     }
-                    return {
-                        id: file.name.replace('.json', ''),
-                        title: file.name.replace('.json', '').replace(/-/g, ' ')
-                    };
-                }));
-                
-                return lessons;
+                }
             }
         } catch (e) {
-            console.log('GitHub API not available, scanning local files...');
+            console.log('Could not scan directory');
         }
         
-        // Method 3: Generate list from hardcoded patterns or manual list
+        // Method 3: Manual list
         return this.getManualLessonList();
     },
     
     getManualLessonList() {
-        // This will be updated by scanning the lessons folder
-        // You can manually add lessons here as a fallback
+        // This is the fallback list
         const manualLessons = [
             { id: 'demo', title: 'Demo Lesson' },
             { id: 'on-the-move-1', title: 'On the Move - Part 1' },
@@ -323,6 +328,11 @@ const App = {
             document.body.classList.add('theme-yellow');
             const toggle = document.getElementById('themeToggle');
             toggle.textContent = 'Switch to Baltic Blue';
+        } else {
+            // Ensure default theme (Baltic Blue) is applied
+            document.body.classList.remove('theme-yellow');
+            const toggle = document.getElementById('themeToggle');
+            toggle.textContent = 'Switch to School Bus Yellow';
         }
     },
     
