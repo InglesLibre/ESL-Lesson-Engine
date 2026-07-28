@@ -1,0 +1,196 @@
+/* Print Styles */
+@media print {
+    /* Hide navigation and controls */
+    #mainHeader,
+    #mainFooter,
+    .navigation-controls,
+    .metadata-bar,
+    .panel,
+    .header-controls,
+    .footer-content,
+    .nav-btn,
+    .footer-btn {
+        display: none !important;
+    }
+    
+    /* Show all slides */
+    .slide-page {
+        display: block !important;
+        page-break-after: always;
+        page-break-inside: avoid;
+        padding: 20px !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+    
+    .slide-page:last-child {
+        page-break-after: avoid;
+    }
+    
+    /* Slide content */
+    .slide-content {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        border-radius: 0 !important;
+        padding: 20px !important;
+        min-height: auto !important;
+    }
+    
+    /* CC License */
+    .cc-license {
+        page-break-after: avoid;
+        margin-top: 20px !important;
+        padding-top: 10px !important;
+        border-top: 1px solid #ccc !important;
+    }
+    
+    /* Ensure images print */
+    .slide-image {
+        max-height: 200px !important;
+        break-inside: avoid;
+    }
+    
+    /* Typography */
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 11pt !important;
+        line-height: 1.5 !important;
+    }
+    
+    h1 {
+        font-size: 20pt !important;
+    }
+    
+    h2 {
+        font-size: 16pt !important;
+    }
+    
+    h3 {
+        font-size: 13pt !important;
+    }
+    
+    /* Activities should be visible */
+    .activity-container {
+        break-inside: avoid;
+    }
+    
+    /* Hide interactive elements */
+    .gapfill-input {
+        border: 1px solid #999 !important;
+        background: transparent !important;
+        min-width: 80px !important;
+    }
+    
+    .multiple-choice-option {
+        background: transparent !important;
+        border: 1px solid #ccc !important;
+    }
+    
+    .dropdown-select {
+        border: 1px solid #999 !important;
+        background: transparent !important;
+    }
+    
+    /* Hide buttons */
+    .activity-btn,
+    .toc-go-btn {
+        display: none !important;
+    }
+    
+    /* Teacher notes - show in print */
+    .teacher-only {
+        display: block !important;
+        background: #f9f9f9 !important;
+        border: 1px solid #ddd !important;
+        padding: 10px !important;
+        margin: 10px 0 !important;
+    }
+    
+    .teacher-only::before {
+        content: "TEACHER NOTES: ";
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    /* Table of Contents - show in print */
+    #tocContent {
+        display: block !important;
+    }
+    
+    .toc-list {
+        column-count: 2;
+        column-gap: 40px;
+    }
+    
+    .toc-item {
+        break-inside: avoid;
+        padding: 4px 0;
+        border-bottom: 1px dotted #ddd;
+    }
+    
+    .toc-go-btn {
+        display: none !important;
+    }
+    
+    /* URLs in print */
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 9pt;
+        color: #666;
+    }
+    
+    a[href^="#"]:after {
+        content: "";
+    }
+    
+    a[href^="javascript:"]:after {
+        content: "";
+    }
+    
+    /* Avoid orphans and widows */
+    p, li, blockquote {
+        orphans: 3;
+        widows: 3;
+    }
+}
+
+/* Print-specific overrides for teacher notes panel */
+@media print {
+    #teacherNotesPanel {
+        display: block !important;
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        margin: 20px 0 !important;
+        padding: 10px !important;
+        page-break-after: avoid !important;
+    }
+    
+    #teacherNotesPanel .panel-header {
+        border-bottom: 1px solid #ddd !important;
+    }
+    
+    #teacherNotesPanel .panel-close-btn {
+        display: none !important;
+    }
+}
+
+/* Black and white print optimization */
+@media print and (monochrome) {
+    .slide-image {
+        filter: grayscale(100%) !important;
+    }
+    
+    .cc-license img {
+        filter: grayscale(100%) !important;
+    }
+    
+    .progress-fill {
+        background: #888 !important;
+    }
+}
