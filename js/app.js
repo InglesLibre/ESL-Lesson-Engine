@@ -38,30 +38,32 @@ const App = {
         console.log('App initialized');
     },
     
-    registerSlideTypes() {
-        // Register all available slide types
-        this.slideTypes = {
-            'Title': SlideTitle,
-            'Speaking Part 1': SlideSpeaking,
-            'Speaking Part 2': SlideSpeaking,
-            'Speaking Part 3': SlideSpeaking,
-            'Grammar Discovery': SlideGrammar,
-            'Grammar Rules': SlideGrammar,
-            'Vocabulary': SlideVocabulary,
-            'Teacher Notes': SlideTeacherNotes,
-            'Objectives': SlideTitle, // Fallback to Title renderer
-            'Ice Breaker': SlideSpeaking, // Fallback to Speaking renderer
-            'Reading': SlideTitle, // Fallback
-            'Listening': SlideTitle, // Fallback
-            'Writing': SlideTitle, // Fallback
-            'Gap Fill': SlideTitle, // Fallback
-            'Dropdown': SlideTitle, // Fallback
-            'Matching': SlideTitle, // Fallback
-            'Drag & Drop': SlideTitle, // Fallback
-            'Multiple Choice': SlideTitle // Fallback
-        };
-        
-        console.log('Slide types registered:', Object.keys(this.slideTypes));
+registerSlideTypes() {
+    // Register all available slide types
+    this.slideTypes = {
+        'Title': SlideTitle,
+        'Speaking Part 1': SlideSpeaking,
+        'Speaking Part 2': SlideSpeaking,
+        'Speaking Part 3': SlideSpeaking,
+        'Grammar Discovery': SlideGrammar,
+        'Grammar Rules': SlideGrammar,
+        'Vocabulary': SlideVocabulary,
+        'Teacher Notes': SlideTeacherNotes,
+        'Objectives': SlideTitle,
+        'Ice Breaker': SlideSpeaking,
+        'Reading': SlideTitle,
+        'Listening': SlideTitle,
+        'Writing': SlideTitle,
+        // Activities - these will be handled by the activity engine
+        'Gap Fill': null,
+        'Dropdown': null,
+        'Matching': null,
+        'Drag & Drop': null,
+        'Multiple Choice': null
+    };
+    
+    console.log('Slide types registered:', Object.keys(this.slideTypes));
+}
     },
     
     setupEventListeners() {
