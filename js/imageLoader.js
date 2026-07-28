@@ -7,6 +7,7 @@ const ImageLoader = {
     },
     
     preloadImage(url) {
+        if (!url) return;
         if (this.cache.has(url)) return;
         
         const img = new Image();
@@ -20,6 +21,7 @@ const ImageLoader = {
     },
     
     preloadImages(urls) {
+        if (!urls || !Array.isArray(urls)) return;
         urls.forEach(url => this.preloadImage(url));
     },
     
