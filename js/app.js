@@ -62,8 +62,8 @@ const App = {
             this.saveProgress();
         }, 30000);
         
-        // Load saved state
-        this.loadSavedState();
+        // Load saved state AFTER lesson list is loaded
+        // We'll handle this in loadLessonList completion
         
         console.log('App initialized');
     },
@@ -129,13 +129,51 @@ const App = {
                         </div>
                     `;
                 }
+                return;
             }
+            
+            // Auto-load the first lesson if no saved state
+            this.autoLoadFirstLesson(validLessons);
             
         } catch (error) {
             console.error('Error loading lesson list:', error);
             // Fallback to manual list
             const manualLessons = this.getManualLessonList();
             this.populateDropdown(manualLessons);
+            
+            // Auto-load from manual list
+            if (manualLessons.length > 0) {
+                this.autoLoadFirstLesson(manualLessons);
+            }
+        }
+    },
+    
+    autoLoadFirstLesson(lessons) {
+        console.log('Auto-loading first lesson...');
+        
+        // Check if we should load saved state first
+        const lastLesson = localStorage.getItem('esl_last_lesson');
+        if (lastLesson) {
+            // Check if the lesson exists
+            const lessonExists = lessons.some(l => l.id === lastLesson);
+            if (lessonExists) {
+                const select = document.getElementById('lessonSelect');
+                if (select) {
+                    select.value = lastLesson;
+                    this.loadLesson(lastLesson);
+                    return;
+                }
+            }
+        }
+        
+        // Load the first lesson
+        if (lessons.length > 0) {
+            const firstLesson = lessons[0];
+            const select = document.getElementById('lessonSelect');
+            if (select) {
+                select.value = firstLesson.id;
+                this.loadLesson(firstLesson.id);
+            }
         }
     },
     
@@ -295,29 +333,8 @@ const App = {
     },
     
     loadSavedState() {
-        const saved = Storage.loadAllProgress();
-        if (saved && Object.keys(saved).length > 0) {
-            // Auto-load the last lesson
-            const lastLesson = localStorage.getItem('esl_last_lesson');
-            if (lastLesson && saved[lastLesson]) {
-                const select = document.getElementById('lessonSelect');
-                if (select) {
-                    // Check if the option exists
-                    let optionExists = false;
-                    for (let i = 0; i < select.options.length; i++) {
-                        if (select.options[i].value === lastLesson) {
-                            optionExists = true;
-                            break;
-                        }
-                    }
-                    if (optionExists) {
-                        select.value = lastLesson;
-                        this.loadLesson(lastLesson);
-                        return;
-                    }
-                }
-            }
-        }
+        // This is now handled in autoLoadFirstLesson
+        // Kept for compatibility
     },
     
     toggleTeacherNotes() {
