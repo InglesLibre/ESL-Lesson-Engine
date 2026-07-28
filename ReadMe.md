@@ -14,5 +14,3 @@ A JavaScript-based lesson delivery system for ESL/EFL classrooms, designed for i
 - **Keyboard navigation** and mobile support
 - **Progressive Web App** ready
 - **No external libraries** required
-
-## Project Structure
