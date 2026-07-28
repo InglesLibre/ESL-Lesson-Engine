@@ -4,12 +4,25 @@ const Navigation = {
     totalSlides: 0,
     
     init() {
-        document.getElementById('prevBtn').addEventListener('click', () => {
-            this.prevSlide();
-        });
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
         
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            this.nextSlide();
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                this.prevSlide();
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                this.nextSlide();
+            });
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') this.prevSlide();
+            if (e.key === 'ArrowRight') this.nextSlide();
         });
     },
     
@@ -42,7 +55,10 @@ const Navigation = {
     updateNavigation(current, total) {
         this.currentIndex = current;
         this.totalSlides = total;
-        document.getElementById('prevBtn').disabled = current === 0;
-        document.getElementById('nextBtn').disabled = current === total - 1;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        if (prevBtn) prevBtn.disabled = current === 0;
+        if (nextBtn) nextBtn.disabled = current === total - 1;
     }
 };
