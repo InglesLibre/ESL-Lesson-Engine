@@ -54,115 +54,122 @@ const App = {
     
     async loadLessonList() {
         try {
-            // Method 1: Try to load manifest
-            const lessons = await this.fetchLessonList();
+            // First try to load from manifest
+            let lessons = [];
             
-            const select = document.getElementById('lessonSelect');
-            // Clear existing options (except the default)
-            while (select.options.length > 1) {
-                select.remove(1);
+            try {
+                const response = await fetch('lessons/lessons.json');
+                if (response.ok) {
+                    const manifest = await response.json();
+                    lessons = manifest.lessons || [];
+                    console.log('Loaded lessons from manifest');
+                }
+            } catch (e) {
+                console.log('No lessons.json found');
             }
             
-            // Sort lessons alphabetically by title
-            lessons.sort((a, b) => a.title.localeCompare(b.title));
-            
-            lessons.forEach(lesson => {
-                const option = document.createElement('option');
-                option.value = lesson.id;
-                option.textContent = lesson.title;
-                select.appendChild(option);
-            });
-            
-            // If lessons found, enable the select
-            if (lessons.length > 0) {
-                select.disabled = false;
+            // If no lessons from manifest, try scanning
+            if (lessons.length === 0) {
+                lessons = await this.scanForLessons();
             }
             
-            console.log(`Loaded ${lessons.length} lessons`);
+            // If still no lessons, use manual list
+            if (lessons.length === 0) {
+                lessons = this.getManualLessonList();
+            }
+            
+            // Validate lessons - check if files exist
+            const validLessons = [];
+            for (const lesson of lessons) {
+                try {
+                    const response = await fetch(`lessons/${lesson.id}.json`);
+                    if (response.ok) {
+                        validLessons.push(lesson);
+                    } else {
+                        console.warn(`Lesson ${lesson.id} not found, skipping`);
+                    }
+                } catch (e) {
+                    console.warn(`Could not verify lesson ${lesson.id}`);
+                }
+            }
+            
+            // Update the dropdown
+            this.populateDropdown(validLessons);
+            
+            console.log(`Loaded ${validLessons.length} valid lessons`);
             
         } catch (error) {
             console.error('Error loading lesson list:', error);
-            // Fallback: try manual list
-            this.loadManualLessonList();
+            // Fallback to manual list
+            const manualLessons = this.getManualLessonList();
+            this.populateDropdown(manualLessons);
         }
     },
     
-    async fetchLessonList() {
-        // Method 1: Try to get list from lessons.json manifest
-        try {
-            const response = await fetch('lessons/lessons.json');
-            if (response.ok) {
-                const manifest = await response.json();
-                return manifest.lessons || [];
-            }
-        } catch (e) {
-            console.log('No lessons.json manifest found');
-        }
+    async scanForLessons() {
+        const lessons = [];
         
-        // Method 2: Try to scan for JSON files
+        // Try GitHub API if on GitHub Pages
         try {
-            // Try GitHub Pages API first
             if (window.location.hostname.includes('github.io')) {
-                const repoPath = window.location.pathname.split('/').slice(1, 2).join('/');
-                const apiUrl = `https://api.github.com/repos/${window.location.hostname.split('.')[0]}/${repoPath}/contents/lessons`;
+                const repoName = window.location.pathname.split('/')[1] || '';
+                const apiUrl = `https://api.github.com/repos/${window.location.hostname.split('.')[0]}/${repoName}/contents/lessons`;
                 
                 const response = await fetch(apiUrl);
                 if (response.ok) {
                     const files = await response.json();
                     const jsonFiles = files.filter(file => 
-                        file.name.endsWith('.json') && file.name !== 'lessons.json'
+                        file.name.endsWith('.json') && 
+                        file.name !== 'lessons.json'
                     );
                     
-                    const lessons = await Promise.all(jsonFiles.map(async (file) => {
+                    for (const file of jsonFiles) {
                         try {
                             const lessonResponse = await fetch(`lessons/${file.name}`);
                             if (lessonResponse.ok) {
                                 const data = await lessonResponse.json();
-                                return {
+                                lessons.push({
                                     id: file.name.replace('.json', ''),
                                     title: data.title || file.name.replace('.json', '').replace(/-/g, ' ')
-                                };
+                                });
                             }
                         } catch (e) {
                             console.warn(`Could not load ${file.name}`);
                         }
-                        return {
-                            id: file.name.replace('.json', ''),
-                            title: file.name.replace('.json', '').replace(/-/g, ' ')
-                        };
-                    }));
-                    
-                    if (lessons.length > 0) {
-                        return lessons;
                     }
                 }
             }
         } catch (e) {
-            console.log('Could not scan directory');
+            console.log('Could not scan via GitHub API');
         }
         
-        // Method 3: Manual list
-        return this.getManualLessonList();
+        return lessons;
     },
     
     getManualLessonList() {
-        // This is the fallback list
-        const manualLessons = [
-            { id: 'demo', title: 'Demo Lesson' },
-            { id: 'on-the-move-1', title: 'On the Move - Part 1' },
-            { id: 'on-the-move-2', title: 'On the Move - Part 2' },
+        // Only include lessons that actually exist
+        const existingLessons = [];
+        
+        // Check which lessons exist by trying to fetch them
+        const possibleLessons = [
+            { id: 'test-lesson', title: 'Test Lesson' },
             { id: 'on-the-move-full', title: 'On the Move - Full Lesson' }
         ];
         
-        // Save to localStorage for offline use
-        localStorage.setItem('esl_lesson_manifest', JSON.stringify(manualLessons));
-        
-        return manualLessons;
+        // Return the list - the app will validate them
+        return possibleLessons;
     },
     
-    loadManualLessonList() {
+    populateDropdown(lessons) {
         const select = document.getElementById('lessonSelect');
-        const lessons = this.getManualLessonList();
+        
+        // Clear existing options (keep the first default option)
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+        
+        // Sort lessons alphabetically by title
+        lessons.sort((a, b) => a.title.localeCompare(b.title));
         
         lessons.forEach(lesson => {
             const option = document.createElement('option');
@@ -170,6 +177,18 @@ const App = {
             option.textContent = lesson.title;
             select.appendChild(option);
         });
+        
+        // If no lessons found, show message
+        if (lessons.length === 0) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'No lessons found';
+            option.disabled = true;
+            select.appendChild(option);
+        }
+        
+        // Enable the select
+        select.disabled = false;
     },
     
     async loadLesson(lessonId) {
@@ -179,26 +198,39 @@ const App = {
             slideContent.innerHTML = '<div style="text-align: center; padding: 3rem;">Loading lesson...</div>';
             
             const response = await fetch(`lessons/${lessonId}.json`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`Lesson "${lessonId}" not found (404)`);
+            }
+            
             this.lessonData = await response.json();
             this.currentLesson = lessonId;
             this.currentSlideIndex = 0;
             
             // Render the lesson
             Renderer.renderLesson(this.lessonData);
-            Navigation.updateNavigation(0, this.lessonData.slides.length);
+            
+            // Get slide count
+            const slides = document.querySelectorAll('.slide-page');
+            const totalSlides = slides.length;
+            
+            // Update navigation
+            Navigation.updateNavigation(0, totalSlides);
+            
+            // Show first slide
+            Renderer.showSlide(0);
             
             // Load saved progress
             const saved = Storage.loadProgress(lessonId);
-            if (saved && saved.slideIndex !== undefined) {
+            if (saved && saved.slideIndex !== undefined && saved.slideIndex < totalSlides) {
                 this.currentSlideIndex = saved.slideIndex;
-                Navigation.goToSlide(saved.slideIndex);
+                Renderer.showSlide(saved.slideIndex);
+                Navigation.updateNavigation(saved.slideIndex, totalSlides);
             }
             
             // Update title
             document.title = `${this.lessonData.title} - ESL Lesson Engine`;
             
-            // Preload images
+            // Preload images (if any)
             this.lessonData.slides.forEach(slide => {
                 if (slide.image) {
                     ImageLoader.preloadImage(slide.image);
@@ -217,8 +249,13 @@ const App = {
             slideContent.innerHTML = `
                 <div style="text-align: center; padding: 3rem; color: #f44336;">
                     <h2>Failed to load lesson</h2>
-                    <p>${error.message}</p>
-                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">Please check that the file exists in the lessons folder.</p>
+                    <p style="margin-top: 1rem;">${error.message}</p>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+                        The lesson file "lessons/${lessonId}.json" was not found.
+                    </p>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+                        Please check that the file exists in the lessons folder.
+                    </p>
                 </div>
             `;
         }
@@ -240,17 +277,19 @@ const App = {
             const lastLesson = localStorage.getItem('esl_last_lesson');
             if (lastLesson && saved[lastLesson]) {
                 const select = document.getElementById('lessonSelect');
-                select.value = lastLesson;
-                this.loadLesson(lastLesson);
-                return;
-            }
-            
-            // If no last lesson, load the first one
-            const firstLesson = Object.keys(saved)[0];
-            if (firstLesson) {
-                const select = document.getElementById('lessonSelect');
-                select.value = firstLesson;
-                this.loadLesson(firstLesson);
+                // Check if the option exists
+                let optionExists = false;
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === lastLesson) {
+                        optionExists = true;
+                        break;
+                    }
+                }
+                if (optionExists) {
+                    select.value = lastLesson;
+                    this.loadLesson(lastLesson);
+                    return;
+                }
             }
         }
     },
@@ -329,7 +368,6 @@ const App = {
             const toggle = document.getElementById('themeToggle');
             toggle.textContent = 'Switch to Baltic Blue';
         } else {
-            // Ensure default theme (Baltic Blue) is applied
             document.body.classList.remove('theme-yellow');
             const toggle = document.getElementById('themeToggle');
             toggle.textContent = 'Switch to School Bus Yellow';
@@ -337,19 +375,8 @@ const App = {
     },
     
     showLicense() {
-        const panel = document.getElementById('licensePanel');
-        const content = panel.querySelector('.license-content');
-        
-        content.innerHTML = `
-            <div class="cc-license">
-                <a href="https://example.com">ESL Classroom resources</a> © 1999 by <a href="https://example.com">InglesLibrePe@gmail.com</a> is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International</a>
-                <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="Creative Commons">
-                <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="Attribution">
-                <img src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" alt="ShareAlike">
-            </div>
-        `;
-        
-        panel.style.display = 'block';
+        // License is now shown per slide in renderer
+        // This method is kept for compatibility but does nothing
     }
 };
 
