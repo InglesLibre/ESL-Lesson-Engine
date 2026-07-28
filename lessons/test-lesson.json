@@ -1,0 +1,149 @@
+{
+  "title": "Test Lesson",
+  "level": "A2 - Pre-Intermediate",
+  "description": "A simple test lesson to verify all slide types work correctly. No images required.",
+  "objectives": [
+    "Test basic slide rendering",
+    "Verify navigation works properly",
+    "Check activity interactions",
+    "Confirm progress saving",
+    "Validate theme switching"
+  ],
+  "teacherNotes": [
+    "This is a test lesson for the ESL Lesson Engine",
+    "It includes basic slide types with no images",
+    "Use this to verify all features work correctly",
+    "Activities included: Gap Fill, Multiple Choice, Dropdown",
+    "No images needed - all text-based"
+  ],
+  "estimatedTime": "15-20 minutes",
+  "materials": "None required - digital lesson only",
+  "slides": [
+    {
+      "type": "Title",
+      "title": "Test Lesson",
+      "subtitle": "Checking All Features Work",
+      "content": "Welcome to the test lesson. Use this to verify everything works correctly."
+    },
+    {
+      "type": "Objectives",
+      "content": "By the end of this test, you will verify:",
+      "objectives": [
+        "The navigation buttons work (Previous/Next)",
+        "Different slide types render correctly",
+        "Activities are interactive and respond",
+        "Theme switching works properly",
+        "Progress is saved automatically"
+      ]
+    },
+    {
+      "type": "Vocabulary",
+      "words": [
+        {
+          "word": "Hello",
+          "definition": "A greeting",
+          "example": "Hello, how are you today?"
+        },
+        {
+          "word": "Goodbye",
+          "definition": "A farewell",
+          "example": "Goodbye, see you tomorrow."
+        },
+        {
+          "word": "Please",
+          "definition": "A polite word",
+          "example": "Please pass me the book."
+        },
+        {
+          "word": "Thank you",
+          "definition": "Expressing gratitude",
+          "example": "Thank you for your help."
+        }
+      ]
+    },
+    {
+      "type": "Gap Fill",
+      "text": "Complete these simple sentences with the correct words.\n\n1. Hello, how {{are}} you today?\n2. Goodbye, see you {{tomorrow}}.\n3. Please {{pass}} me the book.\n4. {{Thank}} you for your help.",
+      "answers": ["are", "tomorrow", "pass", "Thank"]
+    },
+    {
+      "type": "Multiple Choice",
+      "questions": [
+        {
+          "prompt": "What is a polite word for greeting someone?",
+          "options": [
+            "Goodbye",
+            "Hello",
+            "Thank you",
+            "Please"
+          ],
+          "answer": "Hello",
+          "explanation": "Hello is used as a greeting when meeting someone."
+        },
+        {
+          "prompt": "Which word is used to express gratitude?",
+          "options": [
+            "Goodbye",
+            "Hello",
+            "Thank you",
+            "Please"
+          ],
+          "answer": "Thank you",
+          "explanation": "Thank you is used to show appreciation or gratitude."
+        },
+        {
+          "prompt": "What do you say when you want someone to do something politely?",
+          "options": [
+            "Goodbye",
+            "Hello",
+            "Thank you",
+            "Please"
+          ],
+          "answer": "Please",
+          "explanation": "Please is used to make polite requests."
+        }
+      ]
+    },
+    {
+      "type": "Dropdown",
+      "questions": [
+        {
+          "prompt": "Choose the correct greeting for meeting someone in the morning.",
+          "options": [
+            "Good morning",
+            "Good afternoon",
+            "Good evening",
+            "Good night"
+          ],
+          "answer": "Good morning"
+        },
+        {
+          "prompt": "Choose the correct farewell for leaving someone.",
+          "options": [
+            "Hello",
+            "See you later",
+            "Please",
+            "Thank you"
+          ],
+          "answer": "See you later"
+        }
+      ]
+    },
+    {
+      "type": "Speaking Part 1",
+      "prompt": "Answer these simple questions about yourself.",
+      "questions": [
+        "What is your name?",
+        "Where do you live?",
+        "What do you do in your free time?"
+      ],
+      "tips": [
+        "Speak clearly and slowly",
+        "Give full sentences, not just one word",
+        "You have 30 seconds for each answer"
+      ],
+      "duration": 30,
+      "enableRecording": false
+    }
+  ]
+}
