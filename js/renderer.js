@@ -66,23 +66,44 @@ const Renderer = {
         const typeClass = slideType.toLowerCase().replace(/\s+/g, '-');
         container.className = `slide-page slide-${typeClass}`;
         
+        // Check if this is an activity slide type
+        const activityTypes = ['Gap Fill', 'Dropdown', 'Matching', 'Drag & Drop', 'Multiple Choice'];
+        const isActivityType = activityTypes.includes(slideType);
+        
         // Look up the slide type renderer
         let renderer = App.slideTypes && App.slideTypes[slideType];
         
-        if (renderer && typeof renderer.render === 'function') {
-            // Use the dedicated slide type renderer
+        if (renderer && typeof renderer.render === 'function' && !isActivityType) {
+            // Use the dedicated slide type renderer (only for non-activity types)
             renderer.render(slide, container);
         } else {
             // Fallback rendering
             this.renderFallback(slide, container);
         }
         
+        // Render activities - but ONLY if this is an activity type or has activity data
+        // AND we haven't already rendered it through a slide type renderer
+        if (isActivityType || this.hasActivityData(slide)) {
+            // Check if the activity was already rendered by a slide type renderer
+            // We'll use a flag to prevent double rendering
+            this.renderActivity(slide, container);
+        }
+        
         // Add slide number and footer
         this.addSlideFooter(container, index, lessonData);
     },
     
+    hasActivityData(slide) {
+        // Check if the slide contains activity data
+        return !!(slide.text || 
+                  (slide.questions && slide.questions.length > 0) || 
+                  (slide.words && slide.words.length > 0) || 
+                  (slide.pairs && slide.pairs.length > 0) || 
+                  (slide.items && slide.items.length > 0));
+    },
+    
     renderFallback(slide, container) {
-        // Simple fallback rendering
+        // Simple fallback rendering - only for non-activity slides
         if (slide.title) {
             const h1 = document.createElement('h1');
             h1.textContent = slide.title;
@@ -91,27 +112,32 @@ const Renderer = {
             container.appendChild(h1);
         }
         
+        if (slide.subtitle) {
+            const p = document.createElement('p');
+            p.textContent = slide.subtitle;
+            p.style.color = '#4a4a6a';
+            p.style.fontSize = '1.1rem';
+            p.style.marginBottom = '1rem';
+            container.appendChild(p);
+        }
+        
         if (slide.content) {
             const div = document.createElement('div');
             div.innerHTML = slide.content;
             container.appendChild(div);
         }
         
-        // Render activities if present - check for activity type
-        if (slide.type === 'Gap Fill' || slide.type === 'Dropdown' || 
-            slide.type === 'Matching' || slide.type === 'Multiple Choice' || 
-            slide.type === 'Drag & Drop') {
-            this.renderActivity(slide, container);
-        }
-        
-        // Also render if activity data is present
-        if (slide.text || slide.questions || slide.words || slide.pairs || slide.items) {
-            this.renderActivity(slide, container);
-        }
+        // Don't render activities here - they'll be handled by renderActivity separately
     },
     
     renderActivity(slide, container) {
         console.log('renderActivity called for type:', slide.type);
+        
+        // Check if activity already rendered (prevent duplicates)
+        if (container.querySelector('.activity-container')) {
+            console.log('Activity already rendered, skipping');
+            return;
+        }
         
         // Delegate to activity renderers based on slide type
         const activityRenderers = {
@@ -127,15 +153,20 @@ const Renderer = {
         if (renderer && typeof renderer.render === 'function') {
             console.log('Using activity renderer for:', slide.type);
             renderer.render(container, slide);
-        } else {
-            console.warn('No renderer found for activity type:', slide.type);
-            // Try to render based on data structure
-            this.renderGenericActivity(slide, container);
+            return;
         }
+        
+        // Try generic rendering based on data structure
+        this.renderGenericActivity(slide, container);
     },
     
     renderGenericActivity(slide, container) {
         console.log('Using generic activity rendering for:', slide.type);
+        
+        // Check if activity already rendered (prevent duplicates)
+        if (container.querySelector('.activity-container')) {
+            return;
+        }
         
         // Gap Fill
         if (slide.text && slide.answers) {
@@ -158,6 +189,12 @@ const Renderer = {
         // Vocabulary
         if (slide.words && slide.words.length > 0) {
             this.renderVocabularyGeneric(slide, container);
+            return;
+        }
+        
+        // Matching
+        if (slide.pairs && slide.pairs.length > 0) {
+            this.renderMatchingGeneric(slide, container);
             return;
         }
         
@@ -257,17 +294,20 @@ const Renderer = {
                 label.style.borderRadius = '4px';
                 label.style.cursor = 'pointer';
                 label.style.border = '2px solid transparent';
+                label.style.transition = 'all 0.2s';
                 
                 const input = document.createElement('input');
                 input.type = 'radio';
                 input.name = `q${idx}`;
                 input.value = o;
+                input.style.marginRight = '0.5rem';
                 
                 label.appendChild(input);
                 label.appendChild(document.createTextNode(' ' + o));
                 
                 label.addEventListener('click', function() {
                     const parent = this.parentElement;
+                    // Clear all selections in this question
                     parent.querySelectorAll('.multiple-choice-option').forEach(el => {
                         el.style.borderColor = 'transparent';
                         el.style.background = '#f0f4f8';
@@ -275,6 +315,7 @@ const Renderer = {
                     this.style.borderColor = '#1a3a5c';
                     this.style.background = '#e3ecf5';
                     
+                    // Check if correct
                     if (this.querySelector('input').value === q.answer) {
                         this.style.borderColor = '#4caf50';
                         this.style.background = '#e8f5e9';
@@ -425,6 +466,70 @@ const Renderer = {
         });
         
         container.appendChild(grid);
+    },
+    
+    renderMatchingGeneric(slide, container) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'activity-container matching-wrapper';
+        wrapper.style.margin = '1.5rem 0';
+        
+        const grid = document.createElement('div');
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = '1fr 1fr';
+        grid.style.gap = '2rem';
+        
+        const leftCol = document.createElement('div');
+        const rightCol = document.createElement('div');
+        
+        // Shuffle pairs for variety
+        const shuffledPairs = slide.pairs.slice();
+        // Shuffle left and right separately
+        const leftItems = shuffledPairs.map(p => p.left);
+        const rightItems = shuffledPairs.map(p => p.right);
+        
+        // Shuffle using Fisher-Yates
+        for (let i = leftItems.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [leftItems[i], leftItems[j]] = [leftItems[j], leftItems[i]];
+        }
+        for (let i = rightItems.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [rightItems[i], rightItems[j]] = [rightItems[j], rightItems[i]];
+        }
+        
+        leftItems.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'matching-item';
+            div.textContent = item;
+            div.style.padding = '0.5rem 1rem';
+            div.style.margin = '0.25rem 0';
+            div.style.background = '#f0f4f8';
+            div.style.borderRadius = '4px';
+            div.style.cursor = 'pointer';
+            div.style.border = '2px solid transparent';
+            div.dataset.index = index;
+            leftCol.appendChild(div);
+        });
+        
+        rightItems.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'matching-item';
+            div.textContent = item;
+            div.style.padding = '0.5rem 1rem';
+            div.style.margin = '0.25rem 0';
+            div.style.background = '#f0f4f8';
+            div.style.borderRadius = '4px';
+            div.style.cursor = 'pointer';
+            div.style.border = '2px solid transparent';
+            div.dataset.index = index;
+            rightCol.appendChild(div);
+        });
+        
+        grid.appendChild(leftCol);
+        grid.appendChild(rightCol);
+        wrapper.appendChild(grid);
+        
+        container.appendChild(wrapper);
     },
     
     addSlideFooter(container, index, lessonData) {
