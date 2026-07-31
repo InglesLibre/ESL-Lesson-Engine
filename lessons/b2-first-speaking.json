@@ -60,19 +60,14 @@
       "part": 2,
       "title": "Round 1 - Part 2: Long Turn",
       "prompt": "In this part of the test, you're going to speak for 1 minute on your own. You'll have 1 minute to prepare.",
-      "content": "<strong>Task:</strong> A friend of yours wants to start a new hobby. Here are some options. Compare the benefits of each hobby and decide which one would be most beneficial for your friend.",
-      "questions": [
-        "Photography - capturing moments, creativity, outdoor exploration",
-        "Learning a musical instrument - discipline, relaxation, cognitive benefits",
-        "Team sports - social interaction, fitness, teamwork",
-        "Cooking - practical skills, creativity, healthy lifestyle"
-      ],
+      "image": "https://github.com/InglesLibre/ImageRepo/blob/main/ShoppingPrt21.png?raw=true",
+      "content": "<strong>Task:</strong> Look at the two pictures. They show people shopping in different places. Compare the photos and answer this question: <strong>Why have people chosen to shop in these places?</strong>",
       "duration": 60,
       "tips": [
         "Use the 1 minute preparation time to make notes",
-        "Compare all the options before giving your opinion",
-        "Use expressions for comparison: 'While A is..., B is...'",
-        "Give reasons for your choice",
+        "Compare the two situations in the photos",
+        "Speculate about why people might choose each place",
+        "Use expressions for speculation: 'might be,' 'could be,' 'perhaps,' 'it seems that...'",
         "Keep speaking for the full minute"
       ]
     },
@@ -81,12 +76,14 @@
       "part": 3,
       "title": "Round 1 - Part 3: Collaborative Task",
       "prompt": "In this part, you and your partner will discuss a situation together. You have 2-3 minutes to discuss.",
-      "content": "<strong>Task:</strong> A friend is planning a holiday and has asked for your advice. Discuss these options together and decide which would be the best choice.",
+      "image": "https://github.com/InglesLibre/ImageRepo/blob/main/Relationsips1.png?raw=true",
+      "content": "<strong>Task:</strong> Look at the mind map. It shows different types of relationships. Talk to each other about <strong>what problems might arise in these relationships</strong>.",
       "questions": [
-        "Beach resort - relaxation, swimming, water sports",
-        "City break - museums, restaurants, shopping, nightlife",
-        "Mountain retreat - hiking, fresh air, scenery, peace",
-        "Countryside cottage - nature, walking, cooking, rural life"
+        "Boyfriends and girlfriends",
+        "Parents and teenagers",
+        "Flatmates",
+        "Work colleagues",
+        "Brothers and sisters"
       ],
       "duration": 180,
       "tips": [
@@ -102,13 +99,13 @@
       "part": 4,
       "title": "Round 1 - Part 4: Discussion",
       "prompt": "In this final part, the examiner will ask you to discuss some broader questions related to the topic.",
-      "content": "<strong>Examiner:</strong> Let's talk more generally about holidays and travel.",
+      "content": "<strong>Examiner:</strong> Let's talk more generally about relationships and communication.",
       "questions": [
-        "Why do you think people enjoy going on holiday?",
-        "Some people say that holidays are better than material possessions. What's your opinion?",
-        "How have holidays changed in the last 50 years?",
-        "Is it important to learn about other cultures when traveling? Why?",
-        "What advice would you give to someone planning their first trip abroad?"
+        "Why are good relationships important in life?",
+        "What skills do you need to have good relationships with other people?",
+        "Some people say that technology has made relationships more difficult. What do you think?",
+        "How do relationships change as people get older?",
+        "What advice would you give to someone who is having problems with a friend or family member?"
       ],
       "duration": 240,
       "tips": [
@@ -143,18 +140,14 @@
       "part": 2,
       "title": "Round 2 - Part 2: Long Turn",
       "prompt": "You'll have 1 minute to prepare and 1 minute to speak. Use the time to plan your response.",
-      "content": "<strong>Task:</strong> A friend is thinking about finding a new job. Here are some options. Compare the advantages of each job and decide which would be the most suitable.",
-      "questions": [
-        "Working in an office - stability, routine, career progression",
-        "Working remotely - flexibility, independence, digital skills",
-        "Working in education - meaningful work, holidays, helping others",
-        "Working in a creative field - self-expression, innovation, satisfaction"
-      ],
+      "image": "https://github.com/InglesLibre/ImageRepo/blob/main/Turn2Jobs.png?raw=true",
+      "content": "<strong>Task:</strong> Look at the pictures. They show people doing different jobs. Compare the photos and answer this question: <strong>What do you think people might enjoy about these jobs?</strong>",
       "duration": 60,
       "tips": [
         "Make notes during preparation time",
-        "Use comparative structures",
-        "Give reasons for your preferences",
+        "Compare the jobs shown in the photos",
+        "Speculate about what people might enjoy in each job",
+        "Use expressions for giving opinions and speculating",
         "Try to use the full minute"
       ]
     },
@@ -163,12 +156,14 @@
       "part": 3,
       "title": "Round 2 - Part 3: Collaborative Task",
       "prompt": "You and your partner have 2-3 minutes to discuss this situation together.",
-      "content": "<strong>Task:</strong> Your local community wants to improve health and fitness. Discuss these ideas and decide which would be most effective.",
+      "image": "https://github.com/InglesLibre/ImageRepo/blob/main/Speaking3MindMap1.png?raw=true",
+      "content": "<strong>Task:</strong> Look at the mind map. It shows different things that can contribute to happiness. Talk to each other about <strong>how important these are for our personal happiness</strong>.",
       "questions": [
-        "Building a new sports center - facilities, equipment, social opportunities",
-        "Creating more parks and green spaces - walking, exercise, family activities",
-        "Organizing community fitness classes - accessibility, motivation, social support",
-        "Offering health education programs - knowledge, prevention, lifelong habits"
+        "Listening to good music",
+        "Being physically fit",
+        "Having good friends",
+        "Doing a job you like",
+        "Having a lot of money"
       ],
       "duration": 180,
       "tips": [
@@ -201,7 +196,7 @@
     },
     {
       "type": "Teacher Notes",
-      "content": "<h3>B2 First Speaking Assessment Criteria</h3><ul><li><strong>Fluency and Coherence:</strong> Can speak at length, use connectors, and organize ideas</li><li><strong>Lexical Resource:</strong> Uses a good range of vocabulary, including less common words</li><li><strong>Grammatical Range and Accuracy:</strong> Uses a variety of structures with good control</li><li><strong>Pronunciation:</strong> Is generally clear and uses appropriate intonation</li><li><strong>Interactive Communication:</strong> Can initiate and respond, and keep the conversation going</li></ul><h3>Round 1 Topics</h3><ul><li>Part 1: Personal information, hobbies, family</li><li>Part 2: Choosing a hobby</li><li>Part 3: Planning a holiday</li><li>Part 4: Holidays and travel</li></ul><h3>Round 2 Topics</h3><ul><li>Part 1: Daily routine, studies, food</li><li>Part 2: Choosing a job</li><li>Part 3: Health and fitness</li><li>Part 4: Work and careers</li></ul><h3>Timing Guide</h3><ul><li>Part 1: 3 minutes</li><li>Part 2: 2 minutes (1 minute preparation + 1 minute speaking)</li><li>Part 3: 3 minutes</li><li>Part 4: 4 minutes</li><li><strong>Total per round:</strong> 12 minutes</li></ul><h3>Suggested Feedback</h3><ul><li>Note down good vocabulary and grammar usage</li><li>Identify areas for improvement</li><li>Provide specific examples from the student's responses</li><li>Encourage self-reflection after each round</li></ul>"
+      "content": "<h3>B2 First Speaking Assessment Criteria</h3><ul><li><strong>Fluency and Coherence:</strong> Can speak at length, use connectors, and organize ideas</li><li><strong>Lexical Resource:</strong> Uses a good range of vocabulary, including less common words</li><li><strong>Grammatical Range and Accuracy:</strong> Uses a variety of structures with good control</li><li><strong>Pronunciation:</strong> Is generally clear and uses appropriate intonation</li><li><strong>Interactive Communication:</strong> Can initiate and respond, and keep the conversation going</li></ul><h3>Round 1 Topics</h3><ul><li>Part 1: Personal information, hobbies, family</li><li>Part 2: Shopping - comparing different places</li><li>Part 3: Problems in relationships</li><li>Part 4: Relationships and communication</li></ul><h3>Round 2 Topics</h3><ul><li>Part 1: Daily routine, studies, food</li><li>Part 2: Jobs - what people enjoy about work</li><li>Part 3: Factors contributing to happiness</li><li>Part 4: Work and careers</li></ul><h3>Image Sources</h3><ul><li>Round 1 Part 2: ShoppingPrt21.png (Why have people chosen to shop in these places?)</li><li>Round 1 Part 3: Relationships1.png (What problems might arise in these relationships?)</li><li>Round 2 Part 2: Turn2Jobs.png (What do you think people might enjoy about these jobs?)</li><li>Round 2 Part 3: Speaking3MindMap1.png (How important are these for our personal happiness?)</li></ul><h3>Timing Guide</h3><ul><li>Part 1: 3 minutes</li><li>Part 2: 2 minutes (1 minute preparation + 1 minute speaking)</li><li>Part 3: 3 minutes</li><li>Part 4: 4 minutes</li><li><strong>Total per round:</strong> 12 minutes</li></ul><h3>Suggested Feedback</h3><ul><li>Note down good vocabulary and grammar usage</li><li>Identify areas for improvement</li><li>Provide specific examples from the student's responses</li><li>Encourage self-reflection after each round</li></ul>"
     }
   ]
 }
