@@ -1,18 +1,11 @@
 {
   "lessons": [
     {
-      "id": "on-the-move-1",
-      "title": "On the Move - Part 1",
-      "description": "Travel vocabulary and speaking practice",
+      "id": "b2-first-speaking",
+      "title": "B2 First Speaking Practice",
+      "description": "Full B2 First Speaking exam practice with 2 complete rounds",
       "level": "B2",
       "exam": "Cambridge B2 First"
-    },
-    {
-      "id": "lifestyles",
-      "title": "Lifestyles",
-      "description": "Discussing different ways of life",
-      "level": "B1",
-      "exam": "General English"
     },
     {
       "id": "demo",
@@ -20,6 +13,13 @@
       "description": "A simple demo lesson to test the engine",
       "level": "A2",
       "exam": "General English"
+    },
+    {
+      "id": "on-the-move-1",
+      "title": "On the Move - Part 1",
+      "description": "Travel vocabulary and speaking practice",
+      "level": "B2",
+      "exam": "Cambridge B2 First"
     }
   ]
 }
