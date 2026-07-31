@@ -1,0 +1,207 @@
+{
+  "metadata": {
+    "title": "B2 First Speaking Practice",
+    "level": "B2",
+    "duration": 45,
+    "exam": "Cambridge B2 First",
+    "grammar": ["Present tenses", "Past tenses", "Future forms", "Conditionals", "Comparative structures"],
+    "vocabulary": ["Opinions", "Preferences", "Comparisons", "Speculation", "Agreeing/Disagreeing"],
+    "description": "Full B2 First Speaking exam practice with 2 complete rounds covering all 4 parts of the exam."
+  },
+  "teacherNotes": [
+    "This lesson simulates the complete B2 First Speaking exam with 2 rounds",
+    "Round 1: Part 1 (Interview) + Part 2 (Long Turn) + Part 3 (Collaborative Task) + Part 4 (Discussion)",
+    "Round 2: Different topics for additional practice",
+    "Each round takes approximately 14-16 minutes (same as real exam)",
+    "Encourage students to use a wide range of vocabulary and grammar structures",
+    "Time each section carefully to simulate exam conditions",
+    "Provide feedback on: fluency, vocabulary, grammar, pronunciation, and interaction",
+    "Students should work in pairs for Parts 2-4"
+  ],
+  "slides": [
+    {
+      "type": "Title",
+      "title": "B2 First Speaking Practice",
+      "subtitle": "Exam Simulation - Two Complete Rounds",
+      "content": "This lesson simulates the Cambridge B2 First Speaking exam with 2 complete rounds. Work with a partner and practice all 4 parts of the exam."
+    },
+    {
+      "type": "Objectives",
+      "content": "By the end of this practice, you will:",
+      "objectives": [
+        "Complete 2 full rounds of the B2 First Speaking exam",
+        "Practice all 4 parts: Interview, Long Turn, Collaborative Task, and Discussion",
+        "Use a range of vocabulary and grammar structures",
+        "Improve fluency, pronunciation, and interaction skills"
+      ]
+    },
+    {
+      "type": "Speaking Part 1",
+      "part": 1,
+      "title": "Round 1 - Part 1: Interview",
+      "content": "<strong>Examiner:</strong> Good morning. I'm going to ask you some questions about yourself. Let's begin.",
+      "questions": [
+        "Where are you from? Tell me a little about your hometown.",
+        "What do you enjoy doing in your free time?",
+        "Tell me about your family. Do you have any brothers or sisters?",
+        "What kind of music do you like? Why?",
+        "Do you prefer to spend time indoors or outdoors? Why?"
+      ],
+      "duration": 180,
+      "tips": [
+        "Give extended answers - don't just say one word",
+        "Include reasons and examples",
+        "Use a range of vocabulary",
+        "Speak clearly and at a natural pace"
+      ]
+    },
+    {
+      "type": "Speaking Part 2",
+      "part": 2,
+      "title": "Round 1 - Part 2: Long Turn",
+      "prompt": "In this part of the test, you're going to speak for 1 minute on your own. You'll have 1 minute to prepare.",
+      "content": "<strong>Task:</strong> A friend of yours wants to start a new hobby. Here are some options. Compare the benefits of each hobby and decide which one would be most beneficial for your friend.",
+      "questions": [
+        "Photography - capturing moments, creativity, outdoor exploration",
+        "Learning a musical instrument - discipline, relaxation, cognitive benefits",
+        "Team sports - social interaction, fitness, teamwork",
+        "Cooking - practical skills, creativity, healthy lifestyle"
+      ],
+      "duration": 60,
+      "tips": [
+        "Use the 1 minute preparation time to make notes",
+        "Compare all the options before giving your opinion",
+        "Use expressions for comparison: 'While A is..., B is...'",
+        "Give reasons for your choice",
+        "Keep speaking for the full minute"
+      ]
+    },
+    {
+      "type": "Speaking Part 3",
+      "part": 3,
+      "title": "Round 1 - Part 3: Collaborative Task",
+      "prompt": "In this part, you and your partner will discuss a situation together. You have 2-3 minutes to discuss.",
+      "content": "<strong>Task:</strong> A friend is planning a holiday and has asked for your advice. Discuss these options together and decide which would be the best choice.",
+      "questions": [
+        "Beach resort - relaxation, swimming, water sports",
+        "City break - museums, restaurants, shopping, nightlife",
+        "Mountain retreat - hiking, fresh air, scenery, peace",
+        "Countryside cottage - nature, walking, cooking, rural life"
+      ],
+      "duration": 180,
+      "tips": [
+        "Respond to your partner's ideas and suggestions",
+        "Ask questions to keep the conversation going",
+        "Use phrases to agree and disagree politely",
+        "Try to reach a conclusion together"
+      ],
+      "enableRecording": true
+    },
+    {
+      "type": "Speaking Part 4",
+      "part": 4,
+      "title": "Round 1 - Part 4: Discussion",
+      "prompt": "In this final part, the examiner will ask you to discuss some broader questions related to the topic.",
+      "content": "<strong>Examiner:</strong> Let's talk more generally about holidays and travel.",
+      "questions": [
+        "Why do you think people enjoy going on holiday?",
+        "Some people say that holidays are better than material possessions. What's your opinion?",
+        "How have holidays changed in the last 50 years?",
+        "Is it important to learn about other cultures when traveling? Why?",
+        "What advice would you give to someone planning their first trip abroad?"
+      ],
+      "duration": 240,
+      "tips": [
+        "Give longer, more developed answers",
+        "Use a range of complex structures",
+        "Include your opinion and justify it",
+        "Agree or disagree with other opinions"
+      ]
+    },
+    {
+      "type": "Speaking Part 1",
+      "part": 1,
+      "title": "Round 2 - Part 1: Interview",
+      "content": "<strong>Examiner:</strong> Let's talk about different topics. I'm going to ask you some questions.",
+      "questions": [
+        "Tell me about your daily routine. What time do you usually get up?",
+        "What do you enjoy most about studying English?",
+        "Do you have any hobbies or interests that you're passionate about?",
+        "What kind of food do you enjoy eating? Why?",
+        "If you could change one thing about your town or city, what would it be?"
+      ],
+      "duration": 180,
+      "tips": [
+        "Give full, detailed answers",
+        "Use a variety of vocabulary and grammar structures",
+        "Include personal examples",
+        "Remember to speak clearly"
+      ]
+    },
+    {
+      "type": "Speaking Part 2",
+      "part": 2,
+      "title": "Round 2 - Part 2: Long Turn",
+      "prompt": "You'll have 1 minute to prepare and 1 minute to speak. Use the time to plan your response.",
+      "content": "<strong>Task:</strong> A friend is thinking about finding a new job. Here are some options. Compare the advantages of each job and decide which would be the most suitable.",
+      "questions": [
+        "Working in an office - stability, routine, career progression",
+        "Working remotely - flexibility, independence, digital skills",
+        "Working in education - meaningful work, holidays, helping others",
+        "Working in a creative field - self-expression, innovation, satisfaction"
+      ],
+      "duration": 60,
+      "tips": [
+        "Make notes during preparation time",
+        "Use comparative structures",
+        "Give reasons for your preferences",
+        "Try to use the full minute"
+      ]
+    },
+    {
+      "type": "Speaking Part 3",
+      "part": 3,
+      "title": "Round 2 - Part 3: Collaborative Task",
+      "prompt": "You and your partner have 2-3 minutes to discuss this situation together.",
+      "content": "<strong>Task:</strong> Your local community wants to improve health and fitness. Discuss these ideas and decide which would be most effective.",
+      "questions": [
+        "Building a new sports center - facilities, equipment, social opportunities",
+        "Creating more parks and green spaces - walking, exercise, family activities",
+        "Organizing community fitness classes - accessibility, motivation, social support",
+        "Offering health education programs - knowledge, prevention, lifelong habits"
+      ],
+      "duration": 180,
+      "tips": [
+        "Listen to your partner and respond to their points",
+        "Use phrases like: 'I see what you mean,' 'That's a good point,' 'On the other hand...'",
+        "Try to reach an agreement",
+        "Keep the conversation flowing naturally"
+      ]
+    },
+    {
+      "type": "Speaking Part 4",
+      "part": 4,
+      "title": "Round 2 - Part 4: Discussion",
+      "prompt": "Let's discuss the topic of work and careers more generally.",
+      "content": "<strong>Examiner:</strong> Let's talk more generally about work and careers.",
+      "questions": [
+        "What factors do you think are most important when choosing a career?",
+        "Some people say that job satisfaction is more important than salary. What do you think?",
+        "How do you think careers will change in the future?",
+        "Is it better to have a job that is secure or a job that is interesting?",
+        "What advice would you give to someone starting their career?"
+      ],
+      "duration": 240,
+      "tips": [
+        "Give extended answers with examples",
+        "Use conditionals and advanced grammar structures",
+        "Express and justify opinions clearly",
+        "Engage with the examiner's questions"
+      ]
+    },
+    {
+      "type": "Teacher Notes",
+      "content": "<h3>B2 First Speaking Assessment Criteria</h3><ul><li><strong>Fluency and Coherence:</strong> Can speak at length, use connectors, and organize ideas</li><li><strong>Lexical Resource:</strong> Uses a good range of vocabulary, including less common words</li><li><strong>Grammatical Range and Accuracy:</strong> Uses a variety of structures with good control</li><li><strong>Pronunciation:</strong> Is generally clear and uses appropriate intonation</li><li><strong>Interactive Communication:</strong> Can initiate and respond, and keep the conversation going</li></ul><h3>Round 1 Topics</h3><ul><li>Part 1: Personal information, hobbies, family</li><li>Part 2: Choosing a hobby</li><li>Part 3: Planning a holiday</li><li>Part 4: Holidays and travel</li></ul><h3>Round 2 Topics</h3><ul><li>Part 1: Daily routine, studies, food</li><li>Part 2: Choosing a job</li><li>Part 3: Health and fitness</li><li>Part 4: Work and careers</li></ul><h3>Timing Guide</h3><ul><li>Part 1: 3 minutes</li><li>Part 2: 2 minutes (1 minute preparation + 1 minute speaking)</li><li>Part 3: 3 minutes</li><li>Part 4: 4 minutes</li><li><strong>Total per round:</strong> 12 minutes</li></ul><h3>Suggested Feedback</h3><ul><li>Note down good vocabulary and grammar usage</li><li>Identify areas for improvement</li><li>Provide specific examples from the student's responses</li><li>Encourage self-reflection after each round</li></ul>"
+    }
+  ]
+}
